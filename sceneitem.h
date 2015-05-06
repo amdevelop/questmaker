@@ -12,13 +12,15 @@ class SceneItem : public QuestItem
     friend class ItemCreator;
 
     QuestScene* m_scene;
-    SceneItem(QuestScene* scene, ActItem *parent = 0);
+    SceneItem(QuestScene* scene, QString title);
 
 public:
     QuestScene* scene()
     {
         return m_scene;
     }
+
+    QVariant toJson(bool *ok);
 };
 
 #endif // SCENEITEM_H

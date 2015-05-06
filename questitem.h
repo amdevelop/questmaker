@@ -1,11 +1,11 @@
 #ifndef QUESTITEM_H
 #define QUESTITEM_H
 
-#include <QTreeWidgetItem>
+#include <QStandardItem>
 
 #include "questitemnotifier.h"
 
-class QuestItem : public QTreeWidgetItem
+class QuestItem : public QStandardItem
 {
 public:
     enum ItemType
@@ -26,9 +26,10 @@ private:
     QMap<QString, QVariant> m_properties;
 
 public:
-    QuestItem(ItemType t, QTreeWidgetItem *parent);
+    QuestItem(ItemType t, QString);
     ~QuestItem();
 
+    virtual QVariant toJson(bool *ok = 0);
 
     ItemType itemType() const
     {

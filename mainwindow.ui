@@ -16,52 +16,51 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
-     <widget class="QSplitter" name="splitter_2">
+     <widget class="QSplitter" name="splitter_3">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QGraphicsView" name="graphicsView"/>
-      <widget class="QSplitter" name="splitter">
+      <widget class="QSplitter" name="splitter_2">
        <property name="orientation">
-        <enum>Qt::Vertical</enum>
+        <enum>Qt::Horizontal</enum>
        </property>
-       <widget class="QWidget" name="layoutWidget">
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0">
-          <widget class="QToolButton" name="toolCreateItem">
-           <property name="text">
-            <string>i</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="1" column="0" colspan="2">
-          <widget class="QuestTree" name="treeWidget">
-           <column>
+       <widget class="QSplitter" name="splitter">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <widget class="QWidget" name="layoutWidget">
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QToolButton" name="toolCreateItem">
             <property name="text">
-             <string/>
+             <string>i</string>
             </property>
-           </column>
-          </widget>
-         </item>
-        </layout>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QuestTree" name="treeView"/>
+          </item>
+         </layout>
+        </widget>
+        <widget class="PropertyWidget" name="tableWidget"/>
        </widget>
-       <widget class="PropertyWidget" name="tableWidget"/>
       </widget>
      </widget>
     </item>
@@ -83,7 +82,7 @@
      <x>0</x>
      <y>0</y>
      <width>506</width>
-     <height>24</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -139,14 +138,14 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QuestTree</class>
-   <extends>QTreeWidget</extends>
-   <header>questtree.h</header>
-  </customwidget>
-  <customwidget>
    <class>PropertyWidget</class>
    <extends>QTableWidget</extends>
    <header>propertywidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QuestTree</class>
+   <extends>QTreeView</extends>
+   <header>questtree.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

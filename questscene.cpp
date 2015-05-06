@@ -83,14 +83,13 @@ void QuestScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     case ModeCreateItem:
         if(m_polygon_item)
         {
-            if(m_points_vector.count() > m_item_point_counter + 1)
+            if(m_points_vector.count() > m_item_point_counter)
                 m_points_vector.pop_back();
 
             m_points_vector << event->scenePos();
             m_item_polygon = QPolygonF(m_points_vector);
             m_polygon_item->setPolygon(m_item_polygon);
 
-            qDebug() << event->scenePos();
         }
         break;
     case ModeNormal:
@@ -105,17 +104,22 @@ void QuestScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     switch(m_mode)
     {
     case ModeCreateItem:
-        m_item_polygon.append(event->scenePos());
-        m_polygon_item->setPolygon(m_item_polygon);
+        if(!m_points_vector.isEmpty())
+        {
+            m_points_vector.pop_back();
+            m_item_polygon = QPolygonF(m_points_vector);
+            m_polygon_item->setPolygon(m_item_polygon);
 
-        m_items << m_polygon_item;
+            m_items << m_polygon_item;
 
-        m_polygon_item = 0;
-        m_item_polygon.clear();
-        m_item_point_counter = 0;
-        m_points_vector.clear();
+            emit itemCreated(ItemDialog::getItemTitle(), m_item_polygon);
 
-        emit itemCreated(ItemDialog::getItemTitle());
+            m_polygon_item = 0;
+            m_item_polygon.clear();
+            m_item_point_counter = 0;
+            m_points_vector.clear();
+        }
+
         break;
     case ModeNormal:
     default:

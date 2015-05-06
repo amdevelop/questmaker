@@ -5,8 +5,13 @@
 
 class EpisodeItem : public QuestItem
 {
+    friend class ItemCreator;
+
+    explicit EpisodeItem(QString title);
+
 public:
-    explicit EpisodeItem(QTreeWidgetItem *parent);
+
+    QVariant toJson(bool *ok = 0);
 };
 
 #endif // EPISODEITEM_H

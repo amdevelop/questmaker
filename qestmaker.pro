@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     itembackground.cpp \
     scenevisualizer.cpp \
     propertywidget.cpp \
-    questitemnotifier.cpp
+    questitemnotifier.cpp \
+    questnamedialog.cpp
 
 HEADERS  += mainwindow.h \
     questscene.h \
@@ -39,7 +40,14 @@ HEADERS  += mainwindow.h \
     itembackground.h \
     scenevisualizer.h \
     propertywidget.h \
-    questitemnotifier.h
+    questitemnotifier.h \
+    questnamedialog.h
 
 FORMS    += mainwindow.ui \
-    itemdialog.ui
+    itemdialog.ui \
+    questnamedialog.ui
+
+LIBS += -lqjson
+
+OTHER_FILES += \
+    quest.json

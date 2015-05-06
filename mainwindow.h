@@ -49,11 +49,13 @@ private slots:
     void slotFileOpen();
     void slotCreateItem(bool);
 
+    void slotPublish();
+
     void slotCreateScene();
     void slotCreateAct();
-    void slotTreeWidgetClicked(QTreeWidgetItem*,int);
+    void slotTreeWidgetClicked(QModelIndex);
 
-    void slotItemCreated(QString);
+    void slotItemCreated(QString, QPolygonF);
 
     void slotCreateEpisode();
 };

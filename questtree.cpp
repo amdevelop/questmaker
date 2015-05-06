@@ -2,10 +2,11 @@
 
 #include <QMenu>
 #include <QContextMenuEvent>
+
 #include "questitem.h"
 
 QuestTree::QuestTree(QWidget* parent)
-    : QTreeWidget(parent)
+    : QTreeView(parent)
 {
     m_episodeMenu = new QMenu(tr("Episode menu"), this);
     m_actMenu = new QMenu(tr("Act menu"), this);
@@ -22,7 +23,9 @@ QuestTree::QuestTree(QWidget* parent)
 
 void QuestTree::contextMenuEvent(QContextMenuEvent *evt)
 {
-    QuestItem* tmp_item = dynamic_cast<QuestItem*>(itemAt(evt->pos()));
+    QuestItem* tmp_item = dynamic_cast<QuestItem*>(
+                ((QStandardItemModel*)model())->itemFromIndex(
+                    indexAt(evt->pos())));
 
     if(tmp_item)
     {

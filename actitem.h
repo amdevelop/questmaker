@@ -11,7 +11,7 @@ class ActItem : public QuestItem
 
     static int act_counter;
     int m_id;
-    ActItem(EpisodeItem *parent);
+    ActItem(QString title = "");
 
 public:
 
@@ -19,6 +19,8 @@ public:
     {
     return m_id;
     }
+
+    QVariant toJson(bool *ok);
 };
 
 #endif // ACTITEM_H

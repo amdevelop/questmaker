@@ -1,9 +1,9 @@
 #ifndef QUESTTREE_H
 #define QUESTTREE_H
 
-#include <QTreeWidget>
+#include <QTreeView>
 
-class QuestTree : public QTreeWidget
+class QuestTree : public QTreeView
 {
     Q_OBJECT
 

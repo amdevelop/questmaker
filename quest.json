@@ -1,0 +1,84 @@
+{
+    "episode": [
+        [
+            {
+                "title":"act1",
+                "scenes": [
+                    {
+                        "title":"scene1",
+                        "background": "1.jpg",
+                        "items":
+                            [
+                            {
+                                "title":"item1",
+                                "detailed":"detailed.jpg",
+                                "polygon":[[0,0], [100,100], [200,200]]
+                            },
+                            {
+                                "title":"item2",
+                                "detailed":"none",
+                                "polygon":[[0,0], [150,150], [250,250]]
+                            }
+                        ]
+                    },
+                    {
+                        "title":"scene2",
+                        "background": "2.jpg",
+                        "items":
+                            [
+                            {
+                                "title":"item1",
+                                "detailed":"detailed.jpg",
+                                "polygon":[[0,0], [100,100], [200,200]]
+                            },
+                            {
+                                "title":"item2",
+                                "detailed":"none",
+                                "polygon":[[0,0], [150,150], [250,250]]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "title":"act2",
+                "scenes": [
+                    {
+                        "title":"scene1",
+                        "background": "3.jpg",
+                        "items":
+                            [
+                            {
+                                "title":"item1",
+                                "detailed":"detailed.jpg",
+                                "polygon":[[0,0], [100,100], [200,200]]
+                            },
+                            {
+                                "title":"item2",
+                                "detailed":"none",
+                                "polygon":[[0,0], [150,150], [250,250]]
+                            }
+                        ]
+                    },
+                    {
+                        "title":"scene2",
+                        "background": "4.jpg",
+                        "items":
+                            [
+                            {
+                                "title":"item1",
+                                "detailed":"detailed.jpg",
+                                "polygon":[[0,0], [100,100], [200,200]]
+                            },
+                            {
+                                "title":"item2",
+                                "detailed":"none",
+                                "polygon":[[0,0], [150,150], [250,250]]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    ]
+}

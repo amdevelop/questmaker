@@ -1,7 +1,7 @@
 #include "questitem.h"
 
-QuestItem::QuestItem(ItemType t, QTreeWidgetItem *parent)
-    : QTreeWidgetItem(parent)
+QuestItem::QuestItem(ItemType t, QString title)
+    : QStandardItem(title)
 {
     m_type = t;
     m_notifier = new QuestItemNotifier;
@@ -28,3 +28,12 @@ QVariant QuestItem::property(QString name, bool *ok)
 
     return m_properties.value(name);
 }
+
+QVariant QuestItem::toJson(bool *ok)
+{
+    if(ok)
+        *ok = false;
+
+    return QVariant();
+}
+

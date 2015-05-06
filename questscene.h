@@ -70,7 +70,7 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
-    void itemCreated(QString);
+    void itemCreated(QString, QPolygonF);
 
 public slots:
 

@@ -1,7 +1,7 @@
 #ifndef ITEMCREATOR_H
 #define ITEMCREATOR_H
 
-#include <QObject>
+#include <QStandardItemModel>
 
 class QuestScene;
 
@@ -15,9 +15,11 @@ class ItemBackground;
 
 class PropertyWidget;
 
-class ItemCreator : public QObject
+class ItemCreator : public QStandardItemModel
 {
     Q_OBJECT
+
+    EpisodeItem* m_episode;
 
     PropertyWidget *m_propertyWidget;
 
@@ -25,14 +27,16 @@ class ItemCreator : public QObject
 public:
     explicit ItemCreator(QObject *parent = 0);
 
+    QVariant toJson() const;
+
     void setPropetryWidget(PropertyWidget* pw)
     {
         m_propertyWidget = pw;
     }
 
-    ActItem* createActItem(EpisodeItem*);
+    ActItem* createActItem();
     SceneItem* createSceneItem(ActItem*, QuestScene*);
-    ItemItem* createItemItem(SceneItem*, QString);
+    ItemItem* createItemItem(SceneItem*, QString, QPolygonF polygon);
 
 };
 

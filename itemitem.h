@@ -9,7 +9,17 @@ class ItemItem : public QuestItem
 {
     friend class ItemCreator;
 
-    ItemItem(SceneItem* parent);
+    ItemItem(QString title, QPolygon polygon = QPolygon());
+
+    QPolygon m_polygon;
+
+public:
+    QPolygon polygon() const
+    {
+        return m_polygon;
+    }
+
+    QVariant toJson(bool *);
 };
 
 #endif // ITEMITEM_H

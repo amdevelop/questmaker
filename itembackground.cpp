@@ -1,6 +1,6 @@
 #include "itembackground.h"
 
-ItemBackground::ItemBackground(QTreeWidgetItem* parent)
-    : QuestItem(QuestItem::TypeItemBackGround, parent)
+ItemBackground::ItemBackground(QString title)
+    : QuestItem(QuestItem::TypeItemBackGround, title)
 {
 }

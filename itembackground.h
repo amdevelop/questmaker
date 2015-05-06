@@ -6,7 +6,7 @@
 class ItemBackground : public QuestItem
 {
     friend class ItemCreator;
-    ItemBackground(QTreeWidgetItem* parent);
+    ItemBackground(QString title);
 };
 
 #endif // ITEMBACKGROUND_H
