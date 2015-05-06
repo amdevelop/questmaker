@@ -25,6 +25,8 @@ private:
 
     QMap<QString, QVariant> m_properties;
 
+    QStandardItemModel m_property_model;
+
 public:
     QuestItem(ItemType t, QString);
     ~QuestItem();
@@ -39,9 +41,11 @@ public:
     void setProperty(QString, QVariant);
     QVariant property(QString, bool *ok = 0);
 
-    QMap<QString, QVariant> properties()
+    QMap<QString, QVariant> properties();
+
+    QStandardItemModel* propertyModel()
     {
-        return m_properties;
+        return &m_property_model;
     }
 
     QuestItemNotifier* notifier()

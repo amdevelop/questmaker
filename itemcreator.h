@@ -21,18 +21,10 @@ class ItemCreator : public QStandardItemModel
 
     EpisodeItem* m_episode;
 
-    PropertyWidget *m_propertyWidget;
-
-    void connectItem(QuestItem*);
 public:
     explicit ItemCreator(QObject *parent = 0);
 
     QVariant toJson() const;
-
-    void setPropetryWidget(PropertyWidget* pw)
-    {
-        m_propertyWidget = pw;
-    }
 
     ActItem* createActItem();
     SceneItem* createSceneItem(ActItem*, QuestScene*);

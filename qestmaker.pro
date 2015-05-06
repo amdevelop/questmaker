@@ -23,7 +23,6 @@ SOURCES += main.cpp\
     questtree.cpp \
     itembackground.cpp \
     scenevisualizer.cpp \
-    propertywidget.cpp \
     questitemnotifier.cpp \
     questnamedialog.cpp
 
@@ -39,7 +38,6 @@ HEADERS  += mainwindow.h \
     questtree.h \
     itembackground.h \
     scenevisualizer.h \
-    propertywidget.h \
     questitemnotifier.h \
     questnamedialog.h
 

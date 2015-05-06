@@ -99,7 +99,7 @@ void QuestScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 }
 
-void QuestScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+void QuestScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent*)
 {
     switch(m_mode)
     {

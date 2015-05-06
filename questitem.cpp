@@ -16,17 +16,67 @@ QuestItem::~QuestItem()
 
 void QuestItem::setProperty(QString name, QVariant value)
 {
-    m_properties.insert(name, value);
+    m_property_model.setRowCount(
+                m_property_model.rowCount() + 1
+                );
 
+    QStandardItem *name_item = new QStandardItem;
+    name_item->setData(name, Qt::DisplayRole);
+
+    QStandardItem *value_item = new QStandardItem;
+    value_item->setData(value, Qt::DisplayRole);
+
+    m_property_model.setItem(
+                m_property_model.rowCount() - 1,
+                0,
+                name_item);
+
+    m_property_model.setItem(
+                m_property_model.rowCount() - 1,
+                1,
+                value_item);
+
+
+    m_properties.insert(name, value);
     m_notifier->emitPropertyChanged();
 }
 
 QVariant QuestItem::property(QString name, bool *ok)
 {
-    if(ok)
-        *ok = m_properties.contains(name);
+    QStandardItem *root_item = m_property_model.invisibleRootItem();
+    for(int i = 0;
+        i < root_item->rowCount();
+        i++)
+    {
+        if(root_item->child(i)->data(Qt::DisplayRole).toString() == name)
+        {
+            if(ok)
+                *ok = true;
+            return root_item->child(i, 1)->data(Qt::DisplayRole);
+        }
+    }
 
-    return m_properties.value(name);
+    if(ok)
+        *ok = false;
+
+    return QVariant();
+}
+
+QMap<QString, QVariant> QuestItem::properties()
+{
+    QMap<QString, QVariant> ret_map;
+
+    QStandardItem *root_item = m_property_model.invisibleRootItem();
+    for(int i = 0;
+        i < root_item->rowCount();
+        i++)
+    {
+
+        ret_map.insert(root_item->child(i)->data(Qt::DisplayRole).toString(),
+                       root_item->child(i, 1)->data(Qt::DisplayRole));
+    }
+
+    return ret_map;
 }
 
 QVariant QuestItem::toJson(bool *ok)

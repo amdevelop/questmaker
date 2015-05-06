@@ -59,7 +59,11 @@
           </item>
          </layout>
         </widget>
-        <widget class="PropertyWidget" name="tableWidget"/>
+        <widget class="QTableView" name="tableView">
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+        </widget>
        </widget>
       </widget>
      </widget>
@@ -137,11 +141,6 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
-  <customwidget>
-   <class>PropertyWidget</class>
-   <extends>QTableWidget</extends>
-   <header>propertywidget.h</header>
-  </customwidget>
   <customwidget>
    <class>QuestTree</class>
    <extends>QTreeView</extends>

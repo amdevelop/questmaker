@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
-    item_creator.setPropetryWidget(ui->tableWidget);
+//    item_creator.setPropetryWidget(ui->tableWidget);
 
     connect(ui->actionOpen, SIGNAL(triggered()), SLOT(slotFileOpen()));
     connect(ui->actionCreate, SIGNAL(triggered()), SLOT(slotCreateScene()));
@@ -61,10 +61,10 @@ MainWindow::MainWindow(QWidget *parent) :
                            m_settings.value("SplitterSceneSize", 250).toInt() <<
                            m_settings.value("SplitterTreeSize", 250).toInt());
 
-    ui->tableWidget->verticalHeader()->hide();
+//    ui->tableWidget->verticalHeader()->hide();
 
-    ui->tableWidget->setColumnCount(2);
-    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Name") << tr("Value"));
+//    ui->tableWidget->setColumnCount(2);
+//    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Name") << tr("Value"));
 }
 
 MainWindow::~MainWindow()
@@ -158,7 +158,7 @@ void MainWindow::createScene()
 
 //    ui->treeView->setCurrentItem(scene_item);
 
-    ui->tableWidget->setQuestItem(scene_item);
+    ui->tableView->setModel(scene_item->propertyModel());
 }
 
 void MainWindow::slotCreateScene()
@@ -204,7 +204,7 @@ void MainWindow::slotItemCreated(QString title, QPolygonF polygon)
     ItemItem *q_item = item_creator.createItemItem(qs->sceneItem(), title, polygon);
 
     ui->treeView->setCurrentIndex(q_item->index());
-    ui->tableWidget->setQuestItem(q_item);
+    ui->tableView->setModel(q_item->propertyModel());
 }
 
 void MainWindow::slotTreeWidgetClicked(QModelIndex item)
@@ -213,7 +213,7 @@ void MainWindow::slotTreeWidgetClicked(QModelIndex item)
 
     if(q_item)
     {
-        ui->tableWidget->setQuestItem(q_item);
+        ui->tableView->setModel(q_item->propertyModel());
 
         switch(q_item->itemType())
         {
