@@ -22,8 +22,12 @@ QuestScene::QuestScene(QObject *parent) :
 
     m_scene_pixmap = 0;
 
-    m_empty_scene = addRect(0, 0, 300, 200); //QPolygon() << QPoint(0,0) << )
+    drawEmpty();
+}
 
+void QuestScene::drawEmpty()
+{
+    m_empty_scene = addRect(0, 0, 300, 200);
 }
 
 void QuestScene::createItem()
@@ -139,7 +143,6 @@ bool QuestScene::setBackgroundPixmap(const QString& file_path)
             delete m_scene_pixmap;
         }
 
-        m_empty_scene->hide();
         m_scene_pixmap = addPixmap(pixmap);
         m_scene_pixmap->setZValue(-1);
         return true;
@@ -149,3 +152,9 @@ bool QuestScene::setBackgroundPixmap(const QString& file_path)
         return false;
     }
 }
+
+void QuestScene::reset()
+{
+    m_scene_pixmap = 0;
+}
+

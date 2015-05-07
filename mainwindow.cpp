@@ -51,8 +51,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->treeView->setModel(&item_creator);
 
+
+    connect(ui->graphicsView, SIGNAL(itemCreated(QString,QPolygonF)), SLOT(slotItemCreated(QString,QPolygonF)));
     ui->graphicsView->horizontalScrollBar()->hide();
     ui->graphicsView->verticalScrollBar()->hide();
+
 
     move(m_settings.value("WindowPosX", 0).toInt(), m_settings.value("WindowPosY", 0).toInt());
     resize(m_settings.value("WindowWidth", 500).toInt(), m_settings.value("WindowHeight", 500).toInt());
@@ -89,17 +92,23 @@ void MainWindow::slotFileOpen()
         QFileInfo fi(file_path);
         m_settings.setValue("LastOpenedDir", fi.canonicalFilePath());
 
-        if(m_scene)
+        if(ui->graphicsView->sceneItem())
         {
-            if(!m_scene->setBackgroundPixmap(file_path))
-                QMessageBox::critical(this, tr("Critical"), tr("Don't support file format!"));
-            else
-            {
-                m_scene->sceneItem()->setProperty("background", file_path);
+            ui->graphicsView->sceneItem()->setProperty("background", file_path);
+            ui->graphicsView->update();
+        }
+
+//        if(m_scene)
+//        {
+//            if(!m_scene->setBackgroundPixmap(file_path))
+//                QMessageBox::critical(this, tr("Critical"), tr("Don't support file format!"));
+//            else
+//            {
+//                m_scene->sceneItem()->setProperty("background", file_path);
 //                ItemBackground* tmp_item = item_creator.createItemBackground(m_scene->sceneItem(), fi.fileName() + " " + tr("(background)"));
 //                tmp_item->setData(0, Qt::ToolTipRole, fi.canonicalFilePath());
-            }
-        }
+//            }
+//        }
     }
 }
 
@@ -145,19 +154,17 @@ void MainWindow::slotCreateEpisode()
 
 void MainWindow::createScene()
 {
-    m_scene = new QuestScene;
-    connect(m_scene, SIGNAL(itemCreated(QString,QPolygonF)), SLOT(slotItemCreated(QString,QPolygonF)));
-    m_scene->setSceneRect(0, 0, 300, 200);
+//    m_scene = new QuestScene;
+//    connect(m_scene, SIGNAL(itemCreated(QString,QPolygonF)), SLOT(slotItemCreated(QString,QPolygonF)));
+//    m_scene->setSceneRect(0, 0, 300, 200);
 
     SceneItem* scene_item = item_creator.createSceneItem(m_act, m_scene);
-    scene_item->setData(m_scene->title(), Qt::DisplayRole);
+    scene_item->setData(tr("Scene") + QString::number(scene_item->id()),
+                        Qt::DisplayRole);
 
-    m_scene->setSceneItem(scene_item);
-
-    ui->graphicsView->setScene(m_scene);
-
-//    ui->treeView->setCurrentItem(scene_item);
-
+    ui->graphicsView->setSceneItem(scene_item);
+    ui->graphicsView->update();
+    ui->treeView->setCurrentIndex(scene_item->index());
     ui->tableView->setModel(scene_item->propertyModel());
 }
 
@@ -186,25 +193,21 @@ void MainWindow::slotCreateAct()
 void MainWindow::slotCreateItem(bool t)
 {
     if(t)
-    {
-        ui->graphicsView->setMouseTracking(true);
-        m_scene->createItem();
-    }
+        ui->graphicsView->createItem();
     else
-    {
-        ui->graphicsView->setMouseTracking(false);
-        m_scene->endCreateItem();
-    }
+        ui->graphicsView->endCreateItem();
 }
 
 void MainWindow::slotItemCreated(QString title, QPolygonF polygon)
 {
-    QuestScene *qs = (QuestScene*)sender();
-
-    ItemItem *q_item = item_creator.createItemItem(qs->sceneItem(), title, polygon);
+    ItemItem *q_item = item_creator.createItemItem(ui->graphicsView->sceneItem(),
+                                                   title,
+                                                   polygon);
 
     ui->treeView->setCurrentIndex(q_item->index());
     ui->tableView->setModel(q_item->propertyModel());
+
+    ui->graphicsView->update();
 }
 
 void MainWindow::slotTreeWidgetClicked(QModelIndex item)
@@ -235,7 +238,7 @@ void MainWindow::slotTreeWidgetClicked(QModelIndex item)
 
 void MainWindow::setActiveSceneFromItem(SceneItem* item)
 {
-    m_scene = item->scene();
-    ui->graphicsView->setScene(m_scene);
+    ui->graphicsView->setSceneItem(item);
+    ui->graphicsView->update();
 }
 

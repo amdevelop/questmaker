@@ -16,29 +16,37 @@ QuestItem::~QuestItem()
 
 void QuestItem::setProperty(QString name, QVariant value)
 {
-    m_property_model.setRowCount(
-                m_property_model.rowCount() + 1
-                );
+    QStandardItem *value_item = 0;
 
-    QStandardItem *name_item = new QStandardItem;
-    name_item->setData(name, Qt::DisplayRole);
+    if(m_properties.contains(name))
+        value_item = m_properties.value(name);
+    else
+    {
+        m_property_model.setRowCount(
+                    m_property_model.rowCount() + 1
+                    );
 
-    QStandardItem *value_item = new QStandardItem;
+        QStandardItem *name_item = new QStandardItem;
+        name_item->setData(name, Qt::DisplayRole);
+
+        value_item = new QStandardItem;
+
+        m_property_model.setItem(
+                    m_property_model.rowCount() - 1,
+                    0,
+                    name_item);
+
+        m_property_model.setItem(
+                    m_property_model.rowCount() - 1,
+                    1,
+                    value_item);
+
+        m_properties.insert(name, value_item);
+    }
+
     value_item->setData(value, Qt::DisplayRole);
 
-    m_property_model.setItem(
-                m_property_model.rowCount() - 1,
-                0,
-                name_item);
-
-    m_property_model.setItem(
-                m_property_model.rowCount() - 1,
-                1,
-                value_item);
-
-
-    m_properties.insert(name, value);
-    m_notifier->emitPropertyChanged();
+    //    m_notifier->emitPropertyChanged();
 }
 
 QVariant QuestItem::property(QString name, bool *ok)

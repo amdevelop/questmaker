@@ -23,7 +23,7 @@ public:
 private:
     ItemType m_type;
 
-    QMap<QString, QVariant> m_properties;
+    QMap<QString, QStandardItem*> m_properties;
 
     QStandardItemModel m_property_model;
 

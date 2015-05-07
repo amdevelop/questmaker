@@ -1,8 +1,12 @@
 #include "sceneitem.h"
 
+int SceneItem::scene_counter = 0;
+
 SceneItem::SceneItem(QuestScene* scene, QString title) :
     QuestItem(QuestItem::TypeScene, title)
 {
+    m_id = scene_counter++;
+
     m_scene = scene;
 
     setProperty("background", QVariant());

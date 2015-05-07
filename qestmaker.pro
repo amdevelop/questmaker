@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     itembackground.cpp \
     scenevisualizer.cpp \
     questitemnotifier.cpp \
-    questnamedialog.cpp
+    questnamedialog.cpp \
+    visualizermodel.cpp
 
 HEADERS  += mainwindow.h \
     questscene.h \
@@ -39,7 +40,8 @@ HEADERS  += mainwindow.h \
     itembackground.h \
     scenevisualizer.h \
     questitemnotifier.h \
-    questnamedialog.h
+    questnamedialog.h \
+    visualizermodel.h
 
 FORMS    += mainwindow.ui \
     itemdialog.ui \

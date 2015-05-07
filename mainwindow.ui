@@ -20,7 +20,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QGraphicsView" name="graphicsView"/>
+      <widget class="SceneVisualizer" name="graphicsView"/>
       <widget class="QSplitter" name="splitter_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -145,6 +145,11 @@
    <class>QuestTree</class>
    <extends>QTreeView</extends>
    <header>questtree.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SceneVisualizer</class>
+   <extends>QGraphicsView</extends>
+   <header>scenevisualizer.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

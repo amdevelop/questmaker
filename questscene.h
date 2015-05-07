@@ -59,6 +59,10 @@ public:
         return m_scene_item;
     }
 
+    void reset();
+
+    void drawEmpty();
+
     bool setBackgroundPixmap(const QString& file_path);
 
     void createItem();
