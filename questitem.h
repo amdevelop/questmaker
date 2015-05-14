@@ -10,12 +10,23 @@ class QuestItem : public QStandardItem
 public:
     enum ItemType
     {
-        TypeEpisode,
+        TypeEpisode = 0,
         TypeAct,
         TypeScene,
 
         TypeItemBackGround,
         TypeItemItem
+    };
+
+    enum ItemValueType
+    {
+        TypeValueNoType = 0,
+        TypeValueFileType
+    };
+
+    enum QuestRoles
+    {
+        RoleEditType = Qt::UserRole + 1
     };
 
     QuestItemNotifier *m_notifier;
@@ -31,14 +42,15 @@ public:
     QuestItem(ItemType t, QString);
     ~QuestItem();
 
-    virtual QVariant toJson(bool *ok = 0);
+    virtual QVariant toJson(QString save_path,
+                            bool *ok = 0);
 
     ItemType itemType() const
     {
         return m_type;
     }
 
-    void setProperty(QString, QVariant);
+    void setProperty(QString, QVariant = QVariant(), ItemValueType valueType = TypeValueNoType);
     QVariant property(QString, bool *ok = 0);
 
     QMap<QString, QVariant> properties();

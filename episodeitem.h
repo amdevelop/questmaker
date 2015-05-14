@@ -7,11 +7,19 @@ class EpisodeItem : public QuestItem
 {
     friend class ItemCreator;
 
+    static int episode_counter;
+    int m_id;
+
     explicit EpisodeItem(QString title);
 
 public:
+    int id() const
+    {
+        return m_id;
+    }
 
-    QVariant toJson(bool *ok = 0);
+    QVariant toJson(QString save_path,
+                    bool *ok = 0);
 };
 
 #endif // EPISODEITEM_H

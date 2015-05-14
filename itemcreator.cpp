@@ -19,9 +19,9 @@ ItemCreator::ItemCreator(QObject *parent) :
    invisibleRootItem()->appendRow(m_episode);
 }
 
-QVariant ItemCreator::toJson() const
+QVariant ItemCreator::toJson(QString save_path) const
 {
-    return m_episode->toJson();
+    return m_episode->toJson(save_path);
 }
 
 ActItem* ItemCreator::createActItem()

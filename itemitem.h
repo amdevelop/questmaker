@@ -9,6 +9,9 @@ class ItemItem : public QuestItem
 {
     friend class ItemCreator;
 
+    static int item_counter;
+    int m_id;
+
     ItemItem(QString title, QPolygon polygon = QPolygon());
 
     QPolygon m_polygon;
@@ -19,7 +22,12 @@ public:
         return m_polygon;
     }
 
-    QVariant toJson(bool *);
+    int id() const
+    {
+        return m_id;
+    }
+
+    QVariant toJson(QString save_path, bool *);
 };
 
 #endif // ITEMITEM_H

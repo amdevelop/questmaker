@@ -14,7 +14,7 @@ QuestItem::~QuestItem()
     delete m_notifier;
 }
 
-void QuestItem::setProperty(QString name, QVariant value)
+void QuestItem::setProperty(QString name, QVariant value, ItemValueType valueType)
 {
     QStandardItem *value_item = 0;
 
@@ -87,7 +87,7 @@ QMap<QString, QVariant> QuestItem::properties()
     return ret_map;
 }
 
-QVariant QuestItem::toJson(bool *ok)
+QVariant QuestItem::toJson(QString, bool *ok)
 {
     if(ok)
         *ok = false;

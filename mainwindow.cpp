@@ -44,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionCreate_episode, SIGNAL(triggered()), SLOT(slotCreateEpisode()));
 
     connect(ui->toolCreateItem, SIGNAL(toggled(bool)), SLOT(slotCreateItem(bool)));
+    connect(ui->toolOpenFile, SIGNAL(clicked()), SLOT(slotOpenFileToProperties()));
 
     connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(slotTreeWidgetClicked(QModelIndex)));
     connect(ui->treeView, SIGNAL(createAct()), SLOT(slotCreateAct()));
@@ -55,6 +56,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->graphicsView, SIGNAL(itemCreated(QString,QPolygonF)), SLOT(slotItemCreated(QString,QPolygonF)));
     ui->graphicsView->horizontalScrollBar()->hide();
     ui->graphicsView->verticalScrollBar()->hide();
+
+    connect(ui->tableView, SIGNAL(doubleClicked(QModelIndex)), SLOT(slotTableDoubleClicked(QModelIndex)));
 
 
     move(m_settings.value("WindowPosX", 0).toInt(), m_settings.value("WindowPosY", 0).toInt());
@@ -85,6 +88,22 @@ MainWindow::~MainWindow()
 
 void MainWindow::slotFileOpen()
 {
+//    QString file_path = QFileDialog::getOpenFileName(this, "", m_settings.value("LastOpenedDir", QDir::homePath()).toString());
+
+//    if(!file_path.isEmpty())
+//    {
+//        QFileInfo fi(file_path);
+//        m_settings.setValue("LastOpenedDir", fi.canonicalFilePath());
+
+//        if(ui->graphicsView->sceneItem())
+//        {
+//            ui->graphicsView->sceneItem()->setProperty("background", file_path);
+//            ui->graphicsView->update();
+//        }
+}
+
+void MainWindow::slotOpenFileToProperties()
+{
     QString file_path = QFileDialog::getOpenFileName(this, "", m_settings.value("LastOpenedDir", QDir::homePath()).toString());
 
     if(!file_path.isEmpty())
@@ -92,23 +111,21 @@ void MainWindow::slotFileOpen()
         QFileInfo fi(file_path);
         m_settings.setValue("LastOpenedDir", fi.canonicalFilePath());
 
-        if(ui->graphicsView->sceneItem())
+        if(ui->tableView->currentIndex() != QModelIndex())
         {
-            ui->graphicsView->sceneItem()->setProperty("background", file_path);
-            ui->graphicsView->update();
-        }
+            QStandardItemModel* std_model;
+            std_model = (QStandardItemModel*)ui->tableView->model();
 
-//        if(m_scene)
-//        {
-//            if(!m_scene->setBackgroundPixmap(file_path))
-//                QMessageBox::critical(this, tr("Critical"), tr("Don't support file format!"));
-//            else
-//            {
-//                m_scene->sceneItem()->setProperty("background", file_path);
-//                ItemBackground* tmp_item = item_creator.createItemBackground(m_scene->sceneItem(), fi.fileName() + " " + tr("(background)"));
-//                tmp_item->setData(0, Qt::ToolTipRole, fi.canonicalFilePath());
-//            }
-//        }
+            QStandardItem* tmp_item =
+                    std_model->itemFromIndex(ui->tableView->currentIndex());
+
+            if(tmp_item)
+                tmp_item->setData(file_path, Qt::DisplayRole);
+
+            ui->graphicsView->update();
+
+//            tmp_item
+        }
     }
 }
 
@@ -123,18 +140,27 @@ void MainWindow::slotPublish()
 
     if(!quest_name.isEmpty())
     {
-        save_file_path += "/" + quest_name + ".json";
+        QString quest_dir_path = save_file_path + "/" + quest_name;
+        QDir dir(quest_dir_path);
 
-        QFile file(save_file_path);
-        if(file.open(QIODevice::WriteOnly))
+        if(!dir.exists())
         {
-            bool ok;
-            QJson::Serializer().serialize(item_creator.toJson(), &file, &ok);
+            if(dir.mkdir(quest_dir_path))
+            {
+                save_file_path = quest_dir_path + "/" + "quest.json";
 
-            qDebug() << QJson::Serializer().serialize(item_creator.toJson());
+                QFile file(save_file_path);
+                if(file.open(QIODevice::WriteOnly))
+                {
+                    bool ok;
+                    QJson::Serializer().serialize(item_creator.toJson(quest_dir_path), &file, &ok);
 
-            if(!ok)
-                QMessageBox::critical(0, tr("Critical!"), tr("Can't save quest!"));
+                    qDebug() << QJson::Serializer().serialize(item_creator.toJson(quest_dir_path));
+
+                    if(!ok)
+                        QMessageBox::critical(0, tr("Critical!"), tr("Can't save quest!"));
+                }
+            }
         }
     }
 }
@@ -205,9 +231,26 @@ void MainWindow::slotItemCreated(QString title, QPolygonF polygon)
                                                    polygon);
 
     ui->treeView->setCurrentIndex(q_item->index());
+
+    q_item->setProperty("title", title);
     ui->tableView->setModel(q_item->propertyModel());
 
     ui->graphicsView->update();
+}
+
+void MainWindow::slotTableDoubleClicked(QModelIndex item)
+{
+    if(item.column() == 1)
+    {
+        qDebug() << item.data(QuestItem::RoleEditType).toInt();
+        switch (item.data(QuestItem::RoleEditType).toInt()) {
+        case QuestItem::TypeValueFileType:
+            QFileDialog::getOpenFileName(this, "", m_settings.value("LastOpenedDir", QDir::homePath()).toString());
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 void MainWindow::slotTreeWidgetClicked(QModelIndex item)

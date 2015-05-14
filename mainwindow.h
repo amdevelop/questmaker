@@ -47,6 +47,8 @@ private:
 
 private slots:
     void slotFileOpen();
+    void slotOpenFileToProperties();
+
     void slotCreateItem(bool);
 
     void slotPublish();
@@ -54,8 +56,9 @@ private slots:
     void slotCreateScene();
     void slotCreateAct();
     void slotTreeWidgetClicked(QModelIndex);
-
+    void slotTableDoubleClicked(QModelIndex);
     void slotItemCreated(QString, QPolygonF);
+
 
     void slotCreateEpisode();
 };

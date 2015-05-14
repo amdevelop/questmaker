@@ -24,7 +24,7 @@ class ItemCreator : public QStandardItemModel
 public:
     explicit ItemCreator(QObject *parent = 0);
 
-    QVariant toJson() const;
+    QVariant toJson(QString save_path) const;
 
     ActItem* createActItem();
     SceneItem* createSceneItem(ActItem*, QuestScene*);

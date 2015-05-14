@@ -20,7 +20,8 @@ public:
     return m_id;
     }
 
-    QVariant toJson(bool *ok);
+    QVariant toJson(QString save_path,
+                    bool *ok);
 };
 
 #endif // ACTITEM_H
