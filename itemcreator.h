@@ -26,6 +26,11 @@ public:
 
     QVariant toJson(QString save_path) const;
 
+    EpisodeItem* episodeItem()
+    {
+        return m_episode;
+    }
+
     ActItem* createActItem();
     SceneItem* createSceneItem(ActItem*, QuestScene*);
     ItemItem* createItemItem(SceneItem*, QString, QPolygonF polygon);

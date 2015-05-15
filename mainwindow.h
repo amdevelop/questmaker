@@ -24,7 +24,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     QSettings m_settings;
-    ItemCreator item_creator;
+    ItemCreator *m_item_creator;
 
     QuestScene *m_scene;
 
@@ -33,8 +33,11 @@ class MainWindow : public QMainWindow
 
 
 
-    void createScene();
-    void createAct();
+    QuestItem* createScene();
+    QuestItem* createAct();
+    QuestItem* createActEmpty();
+
+    QuestItem* createItem(QString title, QPolygonF);
 
     void setActiveSceneFromItem(SceneItem*);
 
