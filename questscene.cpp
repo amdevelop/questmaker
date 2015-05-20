@@ -72,7 +72,7 @@ void QuestScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             m_polygon_item->setPolygon(m_item_polygon);
         }
 
-        qDebug() << event->scenePos();
+//        qDebug() << event->scenePos();
         break;
     case ModeNormal:
     default:
@@ -116,7 +116,17 @@ void QuestScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent*)
 
             m_items << m_polygon_item;
 
-            emit itemCreated(ItemDialog::getItemTitle(), m_item_polygon);
+
+            QPolygonF double_polygon;
+
+            foreach (QPointF point, m_points_vector) {
+                double_polygon << QPointF(point.x() / width(),
+                                          point.y() / height());
+            }
+
+//            qDebug() << double_polygon;
+
+            emit itemCreated(ItemDialog::getItemTitle(), double_polygon);
 
             m_polygon_item = 0;
             m_item_polygon.clear();
@@ -143,7 +153,10 @@ bool QuestScene::setBackgroundPixmap(const QString& file_path)
             delete m_scene_pixmap;
         }
 
-        m_scene_pixmap = addPixmap(pixmap);
+        m_scene_pixmap = addPixmap(
+                    pixmap.scaled(width(),
+                                  height()));
+
         m_scene_pixmap->setZValue(-1);
         return true;
     }

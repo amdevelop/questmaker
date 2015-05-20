@@ -12,15 +12,17 @@ class ItemItem : public QuestItem
     static int item_counter;
     int m_id;
 
-    ItemItem(QString title, QPolygon polygon = QPolygon());
+    ItemItem(QString title, QPolygonF polygon = QPolygonF());
 
-    QPolygon m_polygon;
+    QPolygonF m_polygon;
 
 public:
-    QPolygon polygon() const
+    QPolygonF polygon() const
     {
         return m_polygon;
     }
+
+    QPolygonF drawPolygon(int w, int h) const;
 
     int id() const
     {

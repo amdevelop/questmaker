@@ -5,6 +5,10 @@
 
 #include "questitem.h"
 
+#include <QDebug>
+
+#include "itemcreator.h"
+
 QuestTree::QuestTree(QWidget* parent)
     : QTreeView(parent)
 {
@@ -18,18 +22,21 @@ QuestTree::QuestTree(QWidget* parent)
     m_sceneMenu->addAction(tr("Up"));
     m_sceneMenu->addAction(tr("Down"));
     m_sceneMenu->addSeparator();
-    m_sceneMenu->addAction(tr("Delete"));
+
+    connect(m_sceneMenu->addAction(tr("Delete")),
+            SIGNAL(triggered()),
+            SLOT(slotDeleteItem()));
 }
 
 void QuestTree::contextMenuEvent(QContextMenuEvent *evt)
 {
-    QuestItem* tmp_item = dynamic_cast<QuestItem*>(
+    m_contexMenuItem = dynamic_cast<QuestItem*>(
                 ((QStandardItemModel*)model())->itemFromIndex(
                     indexAt(evt->pos())));
 
-    if(tmp_item)
+    if(m_contexMenuItem)
     {
-        switch(tmp_item->itemType())
+        switch(m_contexMenuItem->itemType())
         {
         case QuestItem::TypeEpisode:
             m_episodeMenu->exec(evt->globalPos());
@@ -38,11 +45,21 @@ void QuestTree::contextMenuEvent(QContextMenuEvent *evt)
             m_actMenu->exec(evt->globalPos());
             break;
         case QuestItem::TypeScene:
+        case QuestItem::TypeItemItem:
             m_sceneMenu->exec(evt->globalPos());
             break;
-        case QuestItem::TypeItemItem:
         case QuestItem::TypeItemBackGround:
             break;
         }
     }
 }
+
+void QuestTree::slotDeleteItem()
+{
+    if(m_contexMenuItem)
+    {
+        ((ItemCreator*)model())->removeItem(m_contexMenuItem);
+        m_contexMenuItem = 0;
+    }
+}
+

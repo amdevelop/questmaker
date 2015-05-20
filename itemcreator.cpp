@@ -13,7 +13,8 @@
 #include <qjson/serializer.h>
 
 ItemCreator::ItemCreator(QObject *parent) :
-    QStandardItemModel(parent)
+    QStandardItemModel(parent),
+    m_selection_model(this)
 {
    m_episode = new EpisodeItem(tr("Episode"));
    invisibleRootItem()->appendRow(m_episode);
@@ -46,8 +47,17 @@ SceneItem* ItemCreator::createSceneItem(ActItem* item, QuestScene* scene)
 
 ItemItem* ItemCreator::createItemItem(SceneItem* parent, QString title, QPolygonF polygon)
 {
-    ItemItem *tmp_item = new ItemItem(title, polygon.toPolygon());
+    ItemItem *tmp_item = new ItemItem(title, polygon);
     parent->appendRow(tmp_item);
 
     return tmp_item;
 }
+
+void ItemCreator::removeItem(QuestItem* item)
+{
+    if(dynamic_cast<SceneItem*>(item))
+        emit sceneRemoved((SceneItem*)(item));
+
+    removeRow(item->row(), item->parent()->index());
+}
+

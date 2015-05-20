@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionPublish, SIGNAL(triggered()), SLOT(slotPublish()));
 
     connect(ui->actionCreate_episode, SIGNAL(triggered()), SLOT(slotCreateEpisode()));
+    connect(ui->actionClose_episode, SIGNAL(triggered()), SLOT(slotCloseEpisode()));
 
     connect(ui->toolCreateItem, SIGNAL(toggled(bool)), SLOT(slotCreateItem(bool)));
     connect(ui->toolOpenFile, SIGNAL(clicked()), SLOT(slotOpenFileToProperties()));
@@ -180,8 +181,8 @@ void MainWindow::slotFileOpen()
                             foreach (QVariant point_var, item_map.value("polygon").toList())
                             {
                                 polygon << QPointF(
-                                               point_var.toList()[0].toInt(),
-                                        point_var.toList()[1].toInt());
+                                               point_var.toList()[0].toDouble(),
+                                        point_var.toList()[1].toDouble());
                             }
 
                             QuestItem *item_item = createItem(
@@ -292,11 +293,41 @@ void MainWindow::slotCreateEpisode()
     }
 
     m_item_creator = new ItemCreator(this);
+
+    connect(m_item_creator, SIGNAL(rowsRemoved(const QModelIndex&,
+                                               int,
+                                               int)),
+            ui->graphicsView, SLOT(slotRowsRemoved(const QModelIndex&,
+                                                   int,
+                                                   int)));
+
+    connect(m_item_creator->selectionModel(),
+            SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+            SLOT(slotCurrentChanged(QModelIndex,QModelIndex)));
+
+    connect(m_item_creator,
+            SIGNAL(sceneRemoved(SceneItem*)),
+            ui->graphicsView,
+            SLOT(slotSceneRemoved(SceneItem*)));
+
+
     ui->treeView->setModel(m_item_creator);
+    ui->treeView->setSelectionModel(m_item_creator->selectionModel());
     createAct();
 
     ui->treeView->expandAll();
 }
+
+void MainWindow::slotCloseEpisode()
+{
+    if(m_item_creator)
+    {
+        delete m_item_creator;
+        ui->treeView->setModel(0);
+        m_item_creator = 0;
+    }
+}
+
 
 /// SCENE
 
@@ -437,5 +468,22 @@ void MainWindow::setActiveSceneFromItem(SceneItem* item)
 {
     ui->graphicsView->setSceneItem(item);
     ui->graphicsView->update();
+}
+
+/**
+ * @brief этот слот нужен чтобы одновилась таблица свойств
+ * после того, как были удалены строки; визуализатор обновляется
+ * по сигналу от модели rowsRemoved(...)
+ * @param current
+ */
+
+void MainWindow::slotCurrentChanged(const QModelIndex& current,
+                                    const QModelIndex&)
+{
+    QuestItem *q_item = (QuestItem*)
+            m_item_creator->itemFromIndex(current);
+
+    if(q_item)
+        ui->tableView->setModel(q_item->propertyModel());
 }
 

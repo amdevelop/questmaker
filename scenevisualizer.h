@@ -2,9 +2,12 @@
 #define SCENEVISUALIZER_H
 
 #include <QGraphicsView>
+#include <QModelIndex>
 
 class SceneItem;
 class QuestScene;
+
+class QStandardItem;
 
 class SceneVisualizer : public QGraphicsView
 {
@@ -25,6 +28,10 @@ public:
     void endCreateItem();
 
     void update();
+
+public slots:
+    void slotRowsRemoved(const QModelIndex&, int, int);
+    void slotSceneRemoved(SceneItem*);
 
 signals:
     void itemCreated(QString, QPolygonF);

@@ -50,4 +50,5 @@ FORMS    += mainwindow.ui \
 LIBS += -lqjson
 
 OTHER_FILES += \
-    quest.json
+    quest.json \
+    TODO.txt

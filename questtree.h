@@ -3,6 +3,8 @@
 
 #include <QTreeView>
 
+class QuestItem;
+
 class QuestTree : public QTreeView
 {
     Q_OBJECT
@@ -11,11 +13,16 @@ class QuestTree : public QTreeView
     QMenu *m_actMenu;
     QMenu *m_sceneMenu;
 
+    QuestItem* m_contexMenuItem;
+
 public:
     QuestTree(QWidget* parent = 0);
 
 protected:
     void contextMenuEvent(QContextMenuEvent *);
+
+private slots:
+    void slotDeleteItem();
 
 signals:
     void createAct();

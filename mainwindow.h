@@ -62,8 +62,11 @@ private slots:
     void slotTableDoubleClicked(QModelIndex);
     void slotItemCreated(QString, QPolygonF);
 
+    void slotCurrentChanged(const QModelIndex&,
+                            const QModelIndex&);
 
     void slotCreateEpisode();
+    void slotCloseEpisode();
 };
 
 #endif // MAINWINDOW_H

@@ -48,11 +48,13 @@ void SceneVisualizer::update()
         {
             ItemItem* item_item = (ItemItem*)m_item->child(i);
 
-            m_scene->addPolygon(item_item->polygon(),
+            m_scene->addPolygon(item_item->drawPolygon(m_scene->width(), m_scene->height()),
                                 QPen(Qt::blue, 2),
                                 QBrush(QColor(255,255,255,127)));
         }
     }
+    else
+        m_scene->drawEmpty();
 }
 
 bool SceneVisualizer::createItem()
@@ -72,4 +74,21 @@ void SceneVisualizer::endCreateItem()
     m_scene->endCreateItem();
 }
 
+void SceneVisualizer::slotRowsRemoved(const QModelIndex&,
+                      int,
+                      int)
+{
+    update();
+}
 
+void SceneVisualizer::slotSceneRemoved(SceneItem* item)
+{
+    if(m_item == item)
+    {
+        m_scene->clear();
+        m_scene->reset();
+        m_item = 0;
+
+        m_scene->drawEmpty();
+    }
+}

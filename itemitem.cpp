@@ -2,9 +2,12 @@
 
 #include <QDir>
 
+
+#include <QDebug>
+
 int ItemItem::item_counter = 0;
 
-ItemItem::ItemItem(QString title, QPolygon polygon)
+ItemItem::ItemItem(QString title, QPolygonF polygon)
     : QuestItem(QuestItem::TypeItemItem, title)
 {
     m_id = item_counter++;
@@ -31,7 +34,7 @@ QVariant ItemItem::toJson(QString save_path, bool *)
             item_map.insert("detail", copy_fi.fileName());
 
             QVariantList polygon_list;
-            foreach (QPoint point, m_polygon) {
+            foreach (QPointF point, m_polygon) {
 
                 QVariantList point_list;
                 point_list << point.x() << point.y();
@@ -47,3 +50,15 @@ QVariant ItemItem::toJson(QString save_path, bool *)
     return item_map;
 }
 
+QPolygonF ItemItem::drawPolygon(int w, int h) const
+{
+    QPolygonF draw_polygon;
+
+    foreach (QPointF point, m_polygon) {
+        draw_polygon << QPointF(point.x() * w,
+                                point.y() * h);
+    }
+
+    qDebug() << m_polygon << draw_polygon;
+    return draw_polygon;
+}
