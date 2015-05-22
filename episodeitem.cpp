@@ -9,6 +9,7 @@ EpisodeItem::EpisodeItem(QString title) :
     m_id = episode_counter++;
 
     setProperty("cover", QVariant(), QuestItem::TypeValueFileType);
+    setProperty("description", QVariant());
 }
 
 QVariant EpisodeItem::toJson(QString save_path,
