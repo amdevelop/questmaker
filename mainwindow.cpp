@@ -37,15 +37,15 @@ MainWindow::MainWindow(QWidget *parent) :
     //    item_creator.setPropetryWidget(ui->tableWidget);
 
     connect(ui->actionOpen, SIGNAL(triggered()), SLOT(slotFileOpen()));
-    connect(ui->actionCreate, SIGNAL(triggered()), SLOT(slotCreateScene()));
+    //connect(ui->actionCreate, SIGNAL(triggered()), SLOT(slotCreateScene()));
 
     connect(ui->actionPublish, SIGNAL(triggered()), SLOT(slotPublish()));
 
     connect(ui->actionCreate_episode, SIGNAL(triggered()), SLOT(slotCreateEpisode()));
     connect(ui->actionClose_episode, SIGNAL(triggered()), SLOT(slotCloseEpisode()));
 
-    connect(ui->toolCreateItem, SIGNAL(toggled(bool)), SLOT(slotCreateItem(bool)));
-    connect(ui->toolOpenFile, SIGNAL(clicked()), SLOT(slotOpenFileToProperties()));
+    connect(ui->actionCreate_item, SIGNAL(toggled(bool)), SLOT(slotCreateItem(bool)));
+    connect(ui->actionOpenFile, SIGNAL(triggered()), SLOT(slotOpenFileToProperties()));
 
     connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(slotTreeWidgetClicked(QModelIndex)));
     connect(ui->treeView, SIGNAL(createAct()), SLOT(slotCreateAct()));
@@ -293,7 +293,8 @@ void MainWindow::slotCreateEpisode()
     }
 
     m_item_creator = new ItemCreator(this);
-
+    m_item_creator->setHorizontalHeaderLabels(
+                QStringList() << tr("The same Quest"));
     connect(m_item_creator, SIGNAL(rowsRemoved(const QModelIndex&,
                                                int,
                                                int)),
@@ -309,7 +310,6 @@ void MainWindow::slotCreateEpisode()
             SIGNAL(sceneRemoved(SceneItem*)),
             ui->graphicsView,
             SLOT(slotSceneRemoved(SceneItem*)));
-
 
     ui->treeView->setModel(m_item_creator);
     ui->treeView->setSelectionModel(m_item_creator->selectionModel());

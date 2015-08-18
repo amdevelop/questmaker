@@ -6,6 +6,12 @@ QuestItem::QuestItem(ItemType t, QString title)
     m_type = t;
     m_notifier = new QuestItemNotifier;
 
+    m_property_model.setHorizontalHeaderLabels(
+                QStringList()
+                << QObject::tr("Key")
+                << QObject::tr("Value"));
+
+
     setProperty("title", QVariant());
 }
 

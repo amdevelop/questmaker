@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui declarative
 
 TARGET = qestmaker
 TEMPLATE = app
@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     scenevisualizer.cpp \
     questitemnotifier.cpp \
     questnamedialog.cpp \
-    visualizermodel.cpp
+    visualizermodel.cpp \
+    makerlite.cpp
 
 HEADERS  += mainwindow.h \
     questscene.h \
@@ -41,14 +42,20 @@ HEADERS  += mainwindow.h \
     scenevisualizer.h \
     questitemnotifier.h \
     questnamedialog.h \
-    visualizermodel.h
+    visualizermodel.h \
+    makerlite.h
 
 FORMS    += mainwindow.ui \
     itemdialog.ui \
-    questnamedialog.ui
+    questnamedialog.ui \
+    makerlite.ui
 
 LIBS += -lqjson
 
 OTHER_FILES += \
     quest.json \
-    TODO.txt
+    TODO.txt \
+    list.qml
+
+RESOURCES += \
+    res.qrc
