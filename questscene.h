@@ -1,7 +1,7 @@
 #ifndef QUESTSCENE_H
 #define QUESTSCENE_H
 
-#include <QGraphicsScene>
+#include <QtWidgets/QGraphicsScene>
 
 class SceneItem;
 

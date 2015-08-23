@@ -1,7 +1,7 @@
 #ifndef MAKERLITE_H
 #define MAKERLITE_H
 
-#include <QMainWindow>
+#include <QtWidgets/QMainWindow>
 
 namespace Ui {
 class MakerLite;
