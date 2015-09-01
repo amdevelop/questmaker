@@ -14,6 +14,7 @@ public:
         TypeAct,
         TypeScene,
 
+        TypeInterior,
         TypeItemBackGround,
         TypeItemItem
     };

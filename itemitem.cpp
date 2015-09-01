@@ -7,8 +7,8 @@
 
 int ItemItem::item_counter = 0;
 
-ItemItem::ItemItem(QString title, QPolygonF polygon)
-    : QuestItem(QuestItem::TypeItemItem, title)
+ItemItem::ItemItem(QString title, QPolygonF polygon, ItemType type)
+    : QuestItem(type, title)
 {
     m_id = item_counter++;
     m_polygon = polygon;

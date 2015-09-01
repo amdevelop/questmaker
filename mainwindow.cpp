@@ -11,6 +11,7 @@
 #include "actitem.h"
 #include "sceneitem.h"
 #include "itemitem.h"
+#include "interioritem.h"
 #include "itembackground.h"
 #include "questnamedialog.h"
 
@@ -47,6 +48,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionCreate_item, SIGNAL(toggled(bool)), SLOT(slotCreateItem(bool)));
     connect(ui->actionOpenFile, SIGNAL(triggered()), SLOT(slotOpenFileToProperties()));
 
+    connect(ui->actionAdd_Interior, SIGNAL(triggered()), SLOT(slotOpenFileToInterior()));
+
     connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(slotTreeWidgetClicked(QModelIndex)));
     connect(ui->treeView, SIGNAL(createAct()), SLOT(slotCreateAct()));
     connect(ui->treeView, SIGNAL(createScene()), SLOT(slotCreateScene()));
@@ -66,6 +69,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->splitter->setSizes(QList<int>() <<
                            m_settings.value("SplitterSceneSize", 250).toInt() <<
                            m_settings.value("SplitterTreeSize", 250).toInt());
+
+    ui->actionPublish->setEnabled(false);
+    ui->actionOpenFile->setEnabled(false);
+    ui->actionCreate_item->setEnabled(false);
+    ui->actionAdd_Interior->setEnabled(false);
+    ui->actionClose_episode->setEnabled(false);
 
     //    ui->tableWidget->verticalHeader()->hide();
 
@@ -110,6 +119,9 @@ void MainWindow::slotFileOpen()
 
                 m_item_creator = new ItemCreator;
                 ui->treeView->setModel(m_item_creator);
+
+                ui->actionPublish->setEnabled(true);
+                ui->actionClose_episode->setEnabled(true);
 
 
                 QVariantMap episode = json_data.toMap().value("episode").toMap();
@@ -316,6 +328,11 @@ void MainWindow::slotCreateEpisode()
     createAct();
 
     ui->treeView->expandAll();
+
+    ui->actionPublish->setEnabled(true);
+    ui->actionClose_episode->setEnabled(true);
+
+    slotTreeWidgetClicked(m_item_creator->selectionModel()->currentIndex());
 }
 
 void MainWindow::slotCloseEpisode()
@@ -325,9 +342,40 @@ void MainWindow::slotCloseEpisode()
         delete m_item_creator;
         ui->treeView->setModel(0);
         m_item_creator = 0;
+
+        ui->actionPublish->setEnabled(false);
+        ui->actionOpenFile->setEnabled(false);
+        ui->actionCreate_item->setEnabled(false);
+        ui->actionAdd_Interior->setEnabled(false);
+        ui->actionClose_episode->setEnabled(false);
     }
 }
 
+void MainWindow::slotOpenFileToInterior()
+{
+        QString file_path = QFileDialog::getOpenFileName(this, "", m_settings.value("LastOpenedDir", QDir::homePath()).toString());
+
+        if(!file_path.isEmpty())
+        {
+            QFileInfo fi(file_path);
+            m_settings.setValue("LastOpenedDir", fi.canonicalFilePath());
+
+
+            if(m_item_creator)
+            {
+                m_item_creator->createInteriorItem(ui->graphicsView->sceneItem(),
+                                                   file_path);
+
+                ui->graphicsView->update();
+            }
+            else
+            {
+                QMessageBox::critical(this,
+                                      tr("Critical"),
+                                      tr("Can't open interior file"));
+            }
+        }
+}
 
 /// SCENE
 
@@ -386,18 +434,28 @@ QuestItem* MainWindow::createActEmpty()
 
 QuestItem* MainWindow::createItem(QString title, QPolygonF polygon)
 {
-    ItemItem *q_item = m_item_creator->createItemItem(ui->graphicsView->sceneItem(),
-                                                      title,
-                                                      polygon);
+//    InteriorItem* interior_item =
+//            dynamic_cast<InteriorItem*>
+//            (m_item_creator->itemFromIndex(
+//                 m_item_creator->selectionModel()->currentIndex()));
 
-    ui->treeView->setCurrentIndex(q_item->index());
+    if(m_interior_item)
+    {
+        ItemItem *q_item = m_item_creator->createItemItem(m_interior_item,
+                                                          title,
+                                                          polygon);
 
-    q_item->setProperty("title", title);
-    ui->tableView->setModel(q_item->propertyModel());
+        ui->treeView->setCurrentIndex(q_item->index());
 
-    ui->graphicsView->update();
+        q_item->setProperty("title", title);
+        ui->tableView->setModel(q_item->propertyModel());
 
-    return q_item;
+        ui->graphicsView->update();
+
+        return q_item;
+    }
+
+    return 0;
 }
 
 
@@ -437,6 +495,8 @@ void MainWindow::slotTableDoubleClicked(QModelIndex item)
 
 void MainWindow::slotTreeWidgetClicked(QModelIndex item)
 {
+    m_interior_item = 0; // wat?!
+
     if(m_item_creator)
     {
         QuestItem* q_item = dynamic_cast<QuestItem*>(m_item_creator->itemFromIndex(item));
@@ -448,12 +508,37 @@ void MainWindow::slotTreeWidgetClicked(QModelIndex item)
             switch(q_item->itemType())
             {
             case QuestItem::TypeEpisode:
+
+                ui->actionAdd_Interior->setEnabled(false);
+                ui->actionCreate_item->setEnabled(false);
+                ui->actionOpenFile->setEnabled(false);
+
                 break;
             case QuestItem::TypeAct:
                 m_act = (ActItem*)q_item;
+
+                ui->actionAdd_Interior->setEnabled(false);
+                ui->actionCreate_item->setEnabled(false);
+                ui->actionOpenFile->setEnabled(false);
+
                 break;
             case QuestItem::TypeScene:
+
+                ui->actionAdd_Interior->setEnabled(true);
+                ui->actionCreate_item->setEnabled(false);
+                ui->actionOpenFile->setEnabled(true);
+
                 setActiveSceneFromItem((SceneItem*)(q_item));
+                break;
+            case QuestItem::TypeInterior:
+{
+                QModelIndex tmp_ind = m_item_creator->selectionModel()->currentIndex();
+                m_interior_item = dynamic_cast<InteriorItem*>(m_item_creator->itemFromIndex(tmp_ind));
+
+                ui->actionCreate_item->setEnabled(true);
+
+//                m_interior_item = q_item;
+            }
                 break;
             case QuestItem::TypeItemItem:
             case QuestItem::TypeItemBackGround:

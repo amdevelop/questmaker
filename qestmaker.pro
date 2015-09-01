@@ -26,7 +26,9 @@ SOURCES += main.cpp\
     questitemnotifier.cpp \
     questnamedialog.cpp \
     visualizermodel.cpp \
-    makerlite.cpp
+    makerlite.cpp \
+    subjectitem.cpp \
+    interioritem.cpp
 
 HEADERS  += mainwindow.h \
     questscene.h \
@@ -43,7 +45,9 @@ HEADERS  += mainwindow.h \
     questitemnotifier.h \
     questnamedialog.h \
     visualizermodel.h \
-    makerlite.h
+    makerlite.h \
+    subjectitem.h \
+    interioritem.h
 
 FORMS    += mainwindow.ui \
     itemdialog.ui \

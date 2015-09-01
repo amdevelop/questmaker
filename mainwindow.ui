@@ -265,6 +265,7 @@
    <addaction name="separator"/>
    <addaction name="actionCreate_item"/>
    <addaction name="actionOpenFile"/>
+   <addaction name="actionAdd_Interior"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
@@ -353,6 +354,18 @@
    </property>
    <property name="text">
     <string>Publish...</string>
+   </property>
+  </action>
+  <action name="actionAdd_Interior">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/50icons/18.png</normaloff>:/50icons/18.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add Interior</string>
+   </property>
+   <property name="toolTip">
+    <string>Add Interior</string>
    </property>
   </action>
  </widget>

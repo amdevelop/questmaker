@@ -7,7 +7,11 @@
 #include "episodeitem.h"
 #include "actitem.h"
 #include "sceneitem.h"
+
 #include "itemitem.h"
+#include "subjectitem.h"
+#include "interioritem.h"
+
 #include "itembackground.h"
 
 #include <qjson/serializer.h>
@@ -45,13 +49,35 @@ SceneItem* ItemCreator::createSceneItem(ActItem* item, QuestScene* scene)
     return scene_item;
 }
 
-ItemItem* ItemCreator::createItemItem(SceneItem* parent, QString title, QPolygonF polygon)
+ItemItem* ItemCreator::createItemItem(InteriorItem* parent, QString title, QPolygonF polygon)
 {
     ItemItem *tmp_item = new ItemItem(title, polygon);
     parent->appendRow(tmp_item);
 
     return tmp_item;
 }
+
+ItemItem* ItemCreator::createSubjectItem(SceneItem* parent,
+                                         QString file_path,
+                                         QString title)
+{
+    ItemItem *tmp_item = new SubjectItem(title);
+    parent->appendRow(tmp_item);
+
+    return tmp_item;
+}
+
+ItemItem* ItemCreator::createInteriorItem(SceneItem* parent,
+                           QString file_path,
+                           QString title)
+{
+    ItemItem *tmp_item = new InteriorItem(title);
+    tmp_item->setProperty("image_path", file_path);
+    parent->appendRow(tmp_item);
+
+    return tmp_item;
+}
+
 
 void ItemCreator::removeItem(QuestItem* item)
 {

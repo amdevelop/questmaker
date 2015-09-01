@@ -12,7 +12,7 @@ int QuestScene::scene_counter = 0;
 QuestScene::QuestScene(QObject *parent) :
     QGraphicsScene(parent)
 {
-    m_id = scene_counter++;
+//    m_id = scene_counter++;
     m_title = tr("Scene") + QString::number(m_id);
 
     m_mode = ModeNormal;
@@ -21,6 +21,8 @@ QuestScene::QuestScene(QObject *parent) :
     m_item_point_counter = 0;
 
     m_scene_pixmap = 0;
+
+    m_active_item = 0;
 
     drawEmpty();
 }
@@ -75,6 +77,39 @@ void QuestScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 //        qDebug() << event->scenePos();
         break;
     case ModeNormal:
+    {
+        QList <QGraphicsItem*> item_list =
+                items(event->scenePos());
+
+
+        if(!item_list.isEmpty())
+        {
+            foreach (QGraphicsItem* tmp_item, item_list) {
+                if(tmp_item != m_empty_scene)
+                {
+                    m_active_item = tmp_item;
+
+                    if(!m_item_to_id.keys().contains(m_active_item))
+                        m_active_item = 0;
+
+                    if(m_active_item)
+                    {
+                        m_offset_x = event->scenePos().x() - m_active_item->x();
+                        m_offset_y = event->scenePos().y() - m_active_item->y();
+                    }
+
+                    break;
+                }
+                else
+                    continue;
+            }
+        }
+        else
+        {
+            if(m_active_item)
+                m_active_item = 0;
+        }
+    }
     default:
         break;
     }
@@ -97,6 +132,14 @@ void QuestScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         }
         break;
     case ModeNormal:
+        if(m_active_item)
+        {
+            m_active_item->setPos(event->scenePos().x() - m_offset_x,
+                                  event->scenePos().y() - m_offset_y);
+
+            emit itemPosChanged(m_item_to_id.value(m_active_item),
+                                m_active_item->pos());
+        }
     default:
         break;
     }
@@ -141,6 +184,23 @@ void QuestScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent*)
     }
 }
 
+void QuestScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    switch(m_mode)
+    {
+    case ModeNormal:
+
+        m_active_item = 0;
+        m_offset_x = m_offset_y = 0;
+
+        break;
+    case ModeCreateItem:
+    default:
+        break;
+    }
+}
+
+
 bool QuestScene::setBackgroundPixmap(const QString& file_path)
 {
     QPixmap pixmap(file_path);
@@ -166,8 +226,43 @@ bool QuestScene::setBackgroundPixmap(const QString& file_path)
     }
 }
 
+int QuestScene::addIteriorItem(const QString& file_path,
+                               qreal x,
+                               qreal y)
+{
+    QGraphicsItem* item = 0;
+    int ret_id = -1;
+
+    QPixmap pixmap(file_path);
+
+    if(!pixmap.isNull())
+    {
+        item = addPixmap(pixmap);
+        ret_id = scene_counter++;
+        m_item_to_id.insert(item, ret_id);
+
+        item->setPos(x, y);
+    }
+
+    return ret_id;
+}
+
+bool QuestScene::addSubjectItem(const QString& file_path)
+{
+    QPixmap pixmap(file_path);
+
+    if(!pixmap.isNull())
+    {
+        addPixmap(pixmap);
+        return true;
+    }
+
+    return false;
+}
+
 void QuestScene::reset()
 {
     m_scene_pixmap = 0;
+    m_item_to_id.clear();
 }
 

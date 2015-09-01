@@ -7,6 +7,8 @@
 class SceneItem;
 class QuestScene;
 
+class ItemItem;
+
 class QStandardItem;
 
 class SceneVisualizer : public QGraphicsView
@@ -15,6 +17,8 @@ class SceneVisualizer : public QGraphicsView
 
     SceneItem *m_item;
     QuestScene *m_scene;
+
+    QMap <int, ItemItem*> m_graph_to_model;
 public:
     SceneVisualizer(QWidget* parent = 0);
 
@@ -32,6 +36,9 @@ public:
 public slots:
     void slotRowsRemoved(const QModelIndex&, int, int);
     void slotSceneRemoved(SceneItem*);
+
+    // model changing...
+    void slotItemPosChanged(int id, QPointF point);
 
 signals:
     void itemCreated(QString, QPolygonF);

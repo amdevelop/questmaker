@@ -2,6 +2,8 @@
 #define QUESTSCENE_H
 
 #include <QGraphicsScene>
+#include <QMap>
+
 
 class SceneItem;
 
@@ -36,6 +38,16 @@ class QuestScene : public QGraphicsScene
 
     SceneItem *m_scene_item;
 
+    QGraphicsItem* m_active_item;
+
+    QList <QGraphicsItem*> m_interior;
+    QList <QGraphicsItem*> m_subjects;
+
+    qreal m_offset_x;
+    qreal m_offset_y;
+
+    QMap <QGraphicsItem*, int> m_item_to_id;
+
 public:
     explicit QuestScene(QObject *parent = 0);
 
@@ -65,6 +77,9 @@ public:
 
     bool setBackgroundPixmap(const QString& file_path);
 
+    int addIteriorItem(const QString& file_path, qreal x, qreal y);
+    bool addSubjectItem(const QString& file_path);
+
     void createItem();
     void endCreateItem();
 
@@ -72,9 +87,12 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
     void itemCreated(QString, QPolygonF);
+
+    void itemPosChanged(int, QPointF);
 
 public slots:
 

@@ -12,7 +12,6 @@ class ItemItem : public QuestItem
     static int item_counter;
     int m_id;
 
-    ItemItem(QString title, QPolygonF polygon = QPolygonF());
 
     QPolygonF m_polygon;
 
@@ -29,7 +28,15 @@ public:
         return m_id;
     }
 
+    static int getItemCounter()
+    {
+        return item_counter++;
+    }
+
     QVariant toJson(QString save_path, bool *);
+
+protected:
+    ItemItem(QString title, QPolygonF polygon = QPolygonF(), ItemType type = QuestItem::TypeItemItem);
 };
 
 #endif // ITEMITEM_H

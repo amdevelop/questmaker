@@ -31,7 +31,7 @@ class MainWindow : public QMainWindow
     EpisodeItem *m_episode;
     ActItem* m_act;
 
-
+    InteriorItem* m_interior_item;
 
     QuestItem* createScene();
     QuestItem* createAct();
@@ -51,6 +51,8 @@ private:
 private slots:
     void slotFileOpen();
     void slotOpenFileToProperties();
+    void slotOpenFileToInterior();
+
 
     void slotCreateItem(bool);
 

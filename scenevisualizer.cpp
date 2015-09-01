@@ -4,6 +4,9 @@
 #include "sceneitem.h"
 
 #include "itemitem.h"
+#include "interioritem.h"
+
+#include <QMessageBox>
 
 SceneVisualizer::SceneVisualizer(QWidget* parent)
     : QGraphicsView(parent)
@@ -15,6 +18,11 @@ SceneVisualizer::SceneVisualizer(QWidget* parent)
     m_scene->setSceneRect(0, 0, 300, 200);
 
     connect(m_scene, SIGNAL(itemCreated(QString,QPolygonF)), SIGNAL(itemCreated(QString,QPolygonF)));
+    connect(m_scene,
+            SIGNAL(itemPosChanged(int,QPointF)),
+            SLOT(slotItemPosChanged(int,QPointF)));
+
+
     setScene(m_scene);
 }
 
@@ -51,6 +59,22 @@ void SceneVisualizer::update()
             m_scene->addPolygon(item_item->drawPolygon(m_scene->width(), m_scene->height()),
                                 QPen(Qt::blue, 2),
                                 QBrush(QColor(255,255,255,127)));
+
+            QString file_path = item_item->property("image_path").toString();
+            qreal x = item_item->property("scene_x").toReal();
+            qreal y = item_item->property("scene_y").toReal();
+
+
+            if(dynamic_cast<InteriorItem*>(item_item))
+            {
+                int id = -1;
+                if((id = m_scene->addIteriorItem(file_path, x, y)) != -1)
+                    m_graph_to_model.insert(id, item_item);
+                else
+                    QMessageBox::warning(this,
+                                         tr("Warning!"),
+                                         tr("Can't create interior item!"));
+            }
         }
     }
     else
@@ -91,4 +115,11 @@ void SceneVisualizer::slotSceneRemoved(SceneItem* item)
 
         m_scene->drawEmpty();
     }
+}
+
+void SceneVisualizer::slotItemPosChanged(int id, QPointF point)
+{
+    ItemItem * item = m_graph_to_model.value(id);
+    item->setProperty("scene_x", point.x());
+    item->setProperty("scene_y", point.y());
 }

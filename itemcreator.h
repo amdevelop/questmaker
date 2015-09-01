@@ -12,6 +12,10 @@ class EpisodeItem;
 class ActItem;
 class SceneItem;
 class ItemItem;
+
+class InteriorItem;
+class SubjectItem;
+
 class ItemBackground;
 
 class PropertyWidget;
@@ -40,7 +44,16 @@ public:
 
     ActItem* createActItem();
     SceneItem* createSceneItem(ActItem*, QuestScene*);
-    ItemItem* createItemItem(SceneItem*, QString, QPolygonF polygon);
+    ItemItem* createItemItem(InteriorItem*, QString, QPolygonF polygon);
+
+    ItemItem* createSubjectItem(SceneItem* parent,
+                                QString file_path,
+                                QString title);
+
+    ItemItem* createInteriorItem(SceneItem*,
+                               QString file_path,
+                                 QString title = QString());
+
 
     void removeItem(QuestItem*);
 
