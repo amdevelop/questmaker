@@ -184,7 +184,7 @@ void QuestScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent*)
     }
 }
 
-void QuestScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void QuestScene::mouseReleaseEvent(QGraphicsSceneMouseEvent*)
 {
     switch(m_mode)
     {

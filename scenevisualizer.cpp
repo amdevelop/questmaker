@@ -54,26 +54,37 @@ void SceneVisualizer::update()
             i < m_item->rowCount();
             i++)
         {
-            ItemItem* item_item = (ItemItem*)m_item->child(i);
 
-            m_scene->addPolygon(item_item->drawPolygon(m_scene->width(), m_scene->height()),
-                                QPen(Qt::blue, 2),
-                                QBrush(QColor(255,255,255,127)));
-
-            QString file_path = item_item->property("image_path").toString();
-            qreal x = item_item->property("scene_x").toReal();
-            qreal y = item_item->property("scene_y").toReal();
-
-
-            if(dynamic_cast<InteriorItem*>(item_item))
+            InteriorItem* interior_item =
+                    dynamic_cast<InteriorItem*>(m_item->child(i));
+            if(interior_item)
             {
+                QString file_path =
+                        interior_item->property("image_path").toString();
+                qreal x =
+                        interior_item->property("scene_x").toReal();
+                qreal y =
+                        interior_item->property("scene_y").toReal();
+
                 int id = -1;
                 if((id = m_scene->addIteriorItem(file_path, x, y)) != -1)
-                    m_graph_to_model.insert(id, item_item);
-                else
-                    QMessageBox::warning(this,
-                                         tr("Warning!"),
-                                         tr("Can't create interior item!"));
+                    m_graph_to_model.insert(id, interior_item);
+
+
+                for(int j = 0;
+                    j < interior_item->rowCount();
+                    j++)
+                {
+                    ItemItem* item_item =
+                            (ItemItem*)interior_item->child(j);
+
+                    if(item_item)
+                        m_scene->addPolygon(item_item->drawPolygon(m_scene->width(), m_scene->height()),
+                                            QPen(Qt::blue, 2),
+                                            QBrush(QColor(255,255,255,127)));
+
+
+                }
             }
         }
     }

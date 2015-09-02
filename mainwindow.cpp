@@ -505,12 +505,17 @@ void MainWindow::slotTreeWidgetClicked(QModelIndex item)
         {
             ui->tableView->setModel(q_item->propertyModel());
 
+            setActiveSceneFromItem(q_item);
+
             switch(q_item->itemType())
             {
             case QuestItem::TypeEpisode:
 
                 ui->actionAdd_Interior->setEnabled(false);
                 ui->actionCreate_item->setEnabled(false);
+                if(ui->actionCreate_item->isChecked())
+                    ui->actionCreate_item->setChecked(false);
+
                 ui->actionOpenFile->setEnabled(false);
 
                 break;
@@ -519,6 +524,8 @@ void MainWindow::slotTreeWidgetClicked(QModelIndex item)
 
                 ui->actionAdd_Interior->setEnabled(false);
                 ui->actionCreate_item->setEnabled(false);
+                if(ui->actionCreate_item->isChecked())
+                    ui->actionCreate_item->setChecked(false);
                 ui->actionOpenFile->setEnabled(false);
 
                 break;
@@ -526,32 +533,49 @@ void MainWindow::slotTreeWidgetClicked(QModelIndex item)
 
                 ui->actionAdd_Interior->setEnabled(true);
                 ui->actionCreate_item->setEnabled(false);
+                if(ui->actionCreate_item->isChecked())
+                    ui->actionCreate_item->setChecked(false);
                 ui->actionOpenFile->setEnabled(true);
 
-                setActiveSceneFromItem((SceneItem*)(q_item));
                 break;
             case QuestItem::TypeInterior:
-{
+            {
                 QModelIndex tmp_ind = m_item_creator->selectionModel()->currentIndex();
                 m_interior_item = dynamic_cast<InteriorItem*>(m_item_creator->itemFromIndex(tmp_ind));
 
+                ui->actionAdd_Interior->setEnabled(false);
                 ui->actionCreate_item->setEnabled(true);
-
-//                m_interior_item = q_item;
+                ui->actionOpenFile->setEnabled(false);
             }
                 break;
             case QuestItem::TypeItemItem:
+
+                ui->actionAdd_Interior->setEnabled(false);
+                ui->actionCreate_item->setEnabled(false);
+                if(ui->actionCreate_item->isChecked())
+                    ui->actionCreate_item->setChecked(false);
+                ui->actionOpenFile->setEnabled(false);
+
             case QuestItem::TypeItemBackGround:
-                setActiveSceneFromItem((SceneItem*)(q_item->parent()));
                 break;
             }
         }
     }
 }
 
-void MainWindow::setActiveSceneFromItem(SceneItem* item)
+void MainWindow::setActiveSceneFromItem(QuestItem* item)
 {
-    ui->graphicsView->setSceneItem(item);
+    SceneItem* tmp_item = dynamic_cast<SceneItem*>(item);
+
+    if(!tmp_item)
+        while(0 != item)
+        {
+            item = (QuestItem*)item->parent();
+            if(0 != (tmp_item = dynamic_cast<SceneItem*>(item)))
+                break;
+        }
+
+    ui->graphicsView->setSceneItem(tmp_item);
     ui->graphicsView->update();
 }
 

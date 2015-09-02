@@ -39,7 +39,7 @@ class MainWindow : public QMainWindow
 
     QuestItem* createItem(QString title, QPolygonF);
 
-    void setActiveSceneFromItem(SceneItem*);
+    void setActiveSceneFromItem(QuestItem *);
 
 public:
     explicit MainWindow(QWidget *parent = 0);
