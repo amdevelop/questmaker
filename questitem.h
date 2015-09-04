@@ -15,6 +15,7 @@ public:
         TypeScene,
 
         TypeInterior,
+        TypeSubject,
         TypeItemBackGround,
         TypeItemItem
     };

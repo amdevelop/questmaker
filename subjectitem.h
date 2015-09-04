@@ -1,14 +1,14 @@
 #ifndef SUBJECTITEM_H
 #define SUBJECTITEM_H
 
-#include "itemitem.h"
+#include "interioritem.h"
 
-class SubjectItem : public ItemItem
+class SubjectItem : public InteriorItem
 {
     friend class ItemCreator;
 
-    SubjectItem(QString title, QPolygonF polygon = QPolygonF());
-public:
+protected:
+    SubjectItem(QString title = QString());
 };
 
 #endif // SUBJECTITEM_H

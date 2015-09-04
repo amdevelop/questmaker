@@ -28,10 +28,6 @@ public:
         return m_id;
     }
 
-    static int getItemCounter()
-    {
-        return item_counter++;
-    }
 
     QVariant toJson(QString save_path, bool *);
 

@@ -3,8 +3,8 @@
 #include "questscene.h"
 #include "sceneitem.h"
 
-#include "itemitem.h"
 #include "interioritem.h"
+#include "itemitem.h"
 
 #include <QMessageBox>
 
@@ -130,7 +130,7 @@ void SceneVisualizer::slotSceneRemoved(SceneItem* item)
 
 void SceneVisualizer::slotItemPosChanged(int id, QPointF point)
 {
-    ItemItem * item = m_graph_to_model.value(id);
+    InteriorItem * item = m_graph_to_model.value(id);
     item->setProperty("scene_x", point.x());
     item->setProperty("scene_y", point.y());
 }

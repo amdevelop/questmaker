@@ -52,7 +52,10 @@ private slots:
     void slotFileOpen();
     void slotOpenFileToProperties();
     void slotOpenFileToInterior();
+    void slotOpenFileToSubject();
 
+    void slotMoveUp();
+    void slotMoveDown();
 
     void slotCreateItem(bool);
 

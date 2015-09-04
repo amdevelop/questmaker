@@ -1,10 +1,10 @@
 #include "interioritem.h"
 
-InteriorItem::InteriorItem(QString title, QPolygonF polygon) :
-    ItemItem(
-        (title.isEmpty())?"Interior" + QString::number(ItemItem::getItemCounter()):title,
-        polygon,
-        QuestItem::TypeInterior)
+int InteriorItem::interior_counter = 0;
+
+InteriorItem::InteriorItem(QString title, QuestItem::ItemType type) :
+    QuestItem(type,
+        (title.isEmpty())?"Interior" + QString::number(getItemCounter()):title)
 {
     setProperty("scene_x", 0);
     setProperty("scene_y", 0);

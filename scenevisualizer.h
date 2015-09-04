@@ -7,7 +7,7 @@
 class SceneItem;
 class QuestScene;
 
-class ItemItem;
+class InteriorItem;
 
 class QStandardItem;
 
@@ -18,7 +18,7 @@ class SceneVisualizer : public QGraphicsView
     SceneItem *m_item;
     QuestScene *m_scene;
 
-    QMap <int, ItemItem*> m_graph_to_model;
+    QMap <int, InteriorItem*> m_graph_to_model;
 public:
     SceneVisualizer(QWidget* parent = 0);
 

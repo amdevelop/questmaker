@@ -12,6 +12,7 @@
 #include "sceneitem.h"
 #include "itemitem.h"
 #include "interioritem.h"
+#include "subjectitem.h"
 #include "itembackground.h"
 #include "questnamedialog.h"
 
@@ -49,6 +50,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionOpenFile, SIGNAL(triggered()), SLOT(slotOpenFileToProperties()));
 
     connect(ui->actionAdd_Interior, SIGNAL(triggered()), SLOT(slotOpenFileToInterior()));
+    connect(ui->actionAdd_subject, SIGNAL(triggered()), SLOT(slotOpenFileToSubject()));
+
+    connect(ui->actionMove_up, SIGNAL(triggered()), SLOT(slotMoveUp()));
+    connect(ui->actionMove_down, SIGNAL(triggered()), SLOT(slotMoveDown()));
 
     connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(slotTreeWidgetClicked(QModelIndex)));
     connect(ui->treeView, SIGNAL(createAct()), SLOT(slotCreateAct()));
@@ -74,6 +79,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionOpenFile->setEnabled(false);
     ui->actionCreate_item->setEnabled(false);
     ui->actionAdd_Interior->setEnabled(false);
+    ui->actionAdd_subject->setEnabled(false);
     ui->actionClose_episode->setEnabled(false);
 
     //    ui->tableWidget->verticalHeader()->hide();
@@ -377,6 +383,33 @@ void MainWindow::slotOpenFileToInterior()
         }
 }
 
+void MainWindow::slotOpenFileToSubject()
+{
+    QString file_path = QFileDialog::getOpenFileName(this, "", m_settings.value("LastOpenedDir", QDir::homePath()).toString());
+
+    if(!file_path.isEmpty())
+    {
+        QFileInfo fi(file_path);
+        m_settings.setValue("LastOpenedDir", fi.canonicalFilePath());
+
+
+        if(m_item_creator)
+        {
+            m_item_creator->createSubjectItem(ui->graphicsView->sceneItem(),
+                                              file_path);
+
+            ui->graphicsView->update();
+        }
+        else
+        {
+            QMessageBox::critical(this,
+                                  tr("Critical"),
+                                  tr("Can't open interior file"));
+        }
+    }
+}
+
+
 /// SCENE
 
 QuestItem* MainWindow::createScene()
@@ -439,9 +472,11 @@ QuestItem* MainWindow::createItem(QString title, QPolygonF polygon)
 //            (m_item_creator->itemFromIndex(
 //                 m_item_creator->selectionModel()->currentIndex()));
 
-    if(m_interior_item)
+    SubjectItem* subject_item = dynamic_cast<SubjectItem*>(m_interior_item);
+
+    if(subject_item)
     {
-        ItemItem *q_item = m_item_creator->createItemItem(m_interior_item,
+        ItemItem *q_item = m_item_creator->createItemItem(subject_item,
                                                           title,
                                                           polygon);
 
@@ -532,6 +567,7 @@ void MainWindow::slotTreeWidgetClicked(QModelIndex item)
             case QuestItem::TypeScene:
 
                 ui->actionAdd_Interior->setEnabled(true);
+                ui->actionAdd_subject->setEnabled(true);
                 ui->actionCreate_item->setEnabled(false);
                 if(ui->actionCreate_item->isChecked())
                     ui->actionCreate_item->setChecked(false);
@@ -539,14 +575,24 @@ void MainWindow::slotTreeWidgetClicked(QModelIndex item)
 
                 break;
             case QuestItem::TypeInterior:
-            {
-                QModelIndex tmp_ind = m_item_creator->selectionModel()->currentIndex();
-                m_interior_item = dynamic_cast<InteriorItem*>(m_item_creator->itemFromIndex(tmp_ind));
+                m_interior_item = (InteriorItem*)q_item;
 
                 ui->actionAdd_Interior->setEnabled(false);
+                ui->actionAdd_subject->setEnabled(false);
+
+                ui->actionCreate_item->setEnabled(false);
+                if(ui->actionCreate_item->isChecked())
+                    ui->actionCreate_item->setChecked(false);
+                ui->actionOpenFile->setEnabled(false);
+                break;
+            case QuestItem::TypeSubject:
+                m_interior_item = (InteriorItem*)q_item;
+
+                ui->actionAdd_Interior->setEnabled(false);
+                ui->actionAdd_subject->setEnabled(false);
+
                 ui->actionCreate_item->setEnabled(true);
                 ui->actionOpenFile->setEnabled(false);
-            }
                 break;
             case QuestItem::TypeItemItem:
 
@@ -596,3 +642,28 @@ void MainWindow::slotCurrentChanged(const QModelIndex& current,
         ui->tableView->setModel(q_item->propertyModel());
 }
 
+void MainWindow::slotMoveUp()
+{
+//    if(m_interior_item)
+//    {
+//        if(m_interior_item->row() != 0)
+//        {
+//            QStandardItem* parent_item =
+//                    m_interior_item->parent();
+
+//            QStandardItem* tmp_item =
+//                    parent_item->takeChild(m_interior_item->row());
+
+//            parent_item->insertRow(tmp_item->row() - 1,
+//                                   tmp_item);
+//            parent_item->takeRow(m_interior_item->row());
+//        }
+        //        m_item_creator->insertRow();
+
+//    }
+}
+
+void MainWindow::slotMoveDown()
+{
+
+}

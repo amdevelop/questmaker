@@ -44,15 +44,15 @@ public:
 
     ActItem* createActItem();
     SceneItem* createSceneItem(ActItem*, QuestScene*);
-    ItemItem* createItemItem(InteriorItem*, QString, QPolygonF polygon);
+    ItemItem* createItemItem(SubjectItem*, QString, QPolygonF polygon);
 
-    ItemItem* createSubjectItem(SceneItem* parent,
-                                QString file_path,
-                                QString title);
+    SubjectItem* createSubjectItem(SceneItem* parent,
+                                   QString file_path,
+                                   QString title = QString());
 
-    ItemItem* createInteriorItem(SceneItem*,
-                               QString file_path,
-                                 QString title = QString());
+    InteriorItem* createInteriorItem(SceneItem*,
+                                     QString file_path,
+                                     QString title = QString());
 
 
     void removeItem(QuestItem*);

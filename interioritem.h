@@ -1,13 +1,20 @@
 #ifndef INTERIORITEM_H
 #define INTERIORITEM_H
 
-#include "itemitem.h"
+#include "questitem.h"
 
-class InteriorItem : public ItemItem
+
+class InteriorItem : public QuestItem
 {
+    static int interior_counter;
 public:
-    explicit InteriorItem(QString title, QPolygonF polygon = QPolygonF());
-    
+    explicit InteriorItem(QString title,
+                          QuestItem::ItemType type = QuestItem::TypeInterior);
+
+    static int getItemCounter()
+    {
+        return interior_counter++;
+    }
 };
 
 #endif // INTERIORITEM_H

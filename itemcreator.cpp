@@ -49,7 +49,7 @@ SceneItem* ItemCreator::createSceneItem(ActItem* item, QuestScene* scene)
     return scene_item;
 }
 
-ItemItem* ItemCreator::createItemItem(InteriorItem* parent, QString title, QPolygonF polygon)
+ItemItem* ItemCreator::createItemItem(SubjectItem* parent, QString title, QPolygonF polygon)
 {
     ItemItem *tmp_item = new ItemItem(title, polygon);
     parent->appendRow(tmp_item);
@@ -57,21 +57,22 @@ ItemItem* ItemCreator::createItemItem(InteriorItem* parent, QString title, QPoly
     return tmp_item;
 }
 
-ItemItem* ItemCreator::createSubjectItem(SceneItem* parent,
+SubjectItem* ItemCreator::createSubjectItem(SceneItem* parent,
                                          QString file_path,
                                          QString title)
 {
-    ItemItem *tmp_item = new SubjectItem(title);
+    SubjectItem *tmp_item = new SubjectItem(title);
+    tmp_item->setProperty("image_path", file_path);
     parent->appendRow(tmp_item);
 
     return tmp_item;
 }
 
-ItemItem* ItemCreator::createInteriorItem(SceneItem* parent,
+InteriorItem* ItemCreator::createInteriorItem(SceneItem* parent,
                            QString file_path,
                            QString title)
 {
-    ItemItem *tmp_item = new InteriorItem(title);
+    InteriorItem *tmp_item = new InteriorItem(title);
     tmp_item->setProperty("image_path", file_path);
     parent->appendRow(tmp_item);
 
