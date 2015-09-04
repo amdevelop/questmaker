@@ -82,6 +82,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionAdd_subject->setEnabled(false);
     ui->actionClose_episode->setEnabled(false);
 
+
+    ui->actionMove_up->setEnabled(false);
+    ui->actionMove_down->setEnabled(false);
+
     //    ui->tableWidget->verticalHeader()->hide();
 
     //    ui->tableWidget->setColumnCount(2);
@@ -547,6 +551,7 @@ void MainWindow::slotTreeWidgetClicked(QModelIndex item)
             case QuestItem::TypeEpisode:
 
                 ui->actionAdd_Interior->setEnabled(false);
+                ui->actionAdd_subject->setEnabled(false);
                 ui->actionCreate_item->setEnabled(false);
                 if(ui->actionCreate_item->isChecked())
                     ui->actionCreate_item->setChecked(false);
@@ -558,6 +563,7 @@ void MainWindow::slotTreeWidgetClicked(QModelIndex item)
                 m_act = (ActItem*)q_item;
 
                 ui->actionAdd_Interior->setEnabled(false);
+                ui->actionAdd_subject->setEnabled(false);
                 ui->actionCreate_item->setEnabled(false);
                 if(ui->actionCreate_item->isChecked())
                     ui->actionCreate_item->setChecked(false);
