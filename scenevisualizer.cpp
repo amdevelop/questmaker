@@ -19,8 +19,8 @@ SceneVisualizer::SceneVisualizer(QWidget* parent)
 
     connect(m_scene, SIGNAL(itemCreated(QString,QPolygonF)), SIGNAL(itemCreated(QString,QPolygonF)));
     connect(m_scene,
-            SIGNAL(itemPosChanged(int,QPointF)),
-            SLOT(slotItemPosChanged(int,QPointF)));
+            SIGNAL(itemPosChanged(int,qreal,qreal)),
+            SLOT(slotItemPosChanged(int,qreal,qreal)));
 
 
     setScene(m_scene);
@@ -60,16 +60,15 @@ void SceneVisualizer::update()
             if(interior_item)
             {
                 QString file_path =
-                        interior_item->property("image_path").toString();
-                qreal x =
-                        interior_item->property("scene_x").toReal();
-                qreal y =
-                        interior_item->property("scene_y").toReal();
+                        interior_item->property("image").toString();
 
-                int id = -1;
-                if((id = m_scene->addIteriorItem(file_path, x, y)) != -1)
+                int id = m_scene->addIteriorItem(
+                            file_path,
+                            interior_item->sceneX(),
+                            interior_item->sceneY());
+
+                if(id != -1)
                     m_graph_to_model.insert(id, interior_item);
-
 
                 for(int j = 0;
                     j < interior_item->rowCount();
@@ -128,9 +127,22 @@ void SceneVisualizer::slotSceneRemoved(SceneItem* item)
     }
 }
 
-void SceneVisualizer::slotItemPosChanged(int id, QPointF point)
+//void SceneVisualizer::slotItemPosChanged(int id, QPointF point)
+//{
+//    InteriorItem * item = m_graph_to_model.value(id);
+//    item->setSceneX(point.x() / m_scene->width());
+//    item->setSceneY(point.y() / m_scene->height());
+
+//    update();
+//}
+
+void SceneVisualizer::slotItemPosChanged(int id,
+                                         qreal x,
+                                         qreal y)
 {
     InteriorItem * item = m_graph_to_model.value(id);
-    item->setProperty("scene_x", point.x());
-    item->setProperty("scene_y", point.y());
+    item->setSceneX(x);
+    item->setSceneY(y);
+
+    update();
 }

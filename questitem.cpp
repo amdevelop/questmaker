@@ -12,7 +12,7 @@ QuestItem::QuestItem(ItemType t, QString title)
                 << QObject::tr("Value"));
 
 
-    setProperty("title", QVariant());
+    setProperty("title", title);
 }
 
 QuestItem::~QuestItem()
@@ -20,7 +20,7 @@ QuestItem::~QuestItem()
     delete m_notifier;
 }
 
-void QuestItem::setProperty(QString name, QVariant value, ItemValueType valueType)
+void QuestItem::setProperty(QString name, QVariant value, ItemValueType)
 {
     QStandardItem *value_item = 0;
 

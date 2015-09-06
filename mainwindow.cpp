@@ -19,6 +19,8 @@
 #include <qjson/parser.h>
 #include <qjson/serializer.h>
 
+#include "itemdialog.h"
+
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -154,8 +156,8 @@ void MainWindow::slotFileOpen()
 
                 foreach (QVariant act_var, acts) {
 
-                    QuestItem *act_item = createActEmpty();
-
+                    ActItem *act_item = m_item_creator->createActItem();
+                    //createActEmpty();
 
                     QVariantMap act_map = act_var.toMap();
                     QString act_ath = episode_path + "/" + act_map.value("id").toString();
@@ -174,7 +176,9 @@ void MainWindow::slotFileOpen()
 
                     foreach (QVariant scene_var, scenes) {
 
-                        QuestItem *scene_item = createScene();
+//                        QuestItem *scene_item = createScene();
+
+                        SceneItem* scene_item = m_item_creator->createSceneItem(act_item, 0);
 
                         QVariantMap scene_map = scene_var.toMap();
 
@@ -188,10 +192,11 @@ void MainWindow::slotFileOpen()
 
 
                         QString scene_path = act_ath + "/" +
-                                scene_map.value("id").toString() + "/" +
-                                scene_map.value("background").toString();
+                                scene_map.value("id").toString() + "/";
 
-                        scene_item->setProperty("background", scene_path);
+                        scene_item->setProperty("background",
+                                                scene_path +
+                                                scene_map.value("background").toString());
 
 
                         QVariantList items = scene_map.value("items").toList();
@@ -199,30 +204,66 @@ void MainWindow::slotFileOpen()
                         foreach (QVariant items_var, items) {
 
                             QVariantMap item_map = items_var.toMap();
-                            QPolygonF polygon;
-                            foreach (QVariant point_var, item_map.value("polygon").toList())
+
+                            QString interior_path = scene_path +
+                                    item_map.value("id").toString() + "/" +
+                                    item_map.value("image").toString();
+
+                            InteriorItem* tmp_item = 0;
+                            if(item_map.value("type").toString() == "interior")
                             {
-                                polygon << QPointF(
-                                               point_var.toList()[0].toDouble(),
-                                        point_var.toList()[1].toDouble());
+                                tmp_item = m_item_creator->createInteriorItem(
+                                            scene_item,
+                                            interior_path);
+                            }
+                            else if(item_map.value("type").toString() == "subject")
+                            {
+                                SubjectItem* subj_item;
+                                tmp_item = subj_item = m_item_creator->createSubjectItem(
+                                            scene_item,
+                                            interior_path,
+                                            item_map.value("title").toString());
+
+                                QVariantList polygons = item_map.value("polygons").toList();
+
+                                foreach (QVariant one_poly_list, polygons) {
+                                    QPolygonF polygon;
+                                    foreach (QVariant point_var, one_poly_list.toList())
+                                    {
+                                        polygon << QPointF(
+                                                       point_var.toList()[0].toDouble(),
+                                                point_var.toList()[1].toDouble());
+                                    }
+
+                                    m_item_creator->createItemItem(subj_item, "", polygon);
+                                }
                             }
 
-                            QuestItem *item_item = createItem(
-                                        item_map.value("title").toString(),
-                                        polygon);
+                            if(tmp_item)
+                            {
+                                tmp_item->setProperty("title", item_map.value("title"));
 
-                            foreach (QString key, item_map.keys()) {
-                                if(
-                                        item_map.value(key).type() != QVariant::List &&
-                                        item_map.value(key).type() != QVariant::Map )
-                                    if(key != "id")
-                                        item_item->setProperty(key, item_map.value(key));
+                                tmp_item->setSceneX(item_map.value("scene_x").toReal());
+                                tmp_item->setSceneY(item_map.value("scene_y").toReal());
+
+//                                                            foreach (QString key, item_map.keys()) {
+//                                                                if(
+//                                                                        item_map.value(key).type() != QVariant::List &&
+//                                                                        item_map.value(key).type() != QVariant::Map )
+//                                                                    if(key != "id")
+//                                                                        item_item->setProperty(key, item_map.value(key));
+//                                                            }
+
                             }
+                            //                            QuestItem *item_item = createItem(
+//                                        item_map.value("title").toString(),
+//                                        polygon);
 
-                            if(item_map.value("detail").type() != QVariant::Invalid &&
-                                    item_map.value("detail").toString() != "")
-                                item_item->setProperty("detail",
-                                                       scene_path + "/" + item_map.value("detail").toString());
+
+//                            if(item_map.value("detail").type() != QVariant::Invalid &&
+//                                    item_map.value("detail").toString() != "")
+//                                item_item->setProperty("detail",
+//                                                       scene_path + "/" + item_map.value("detail").toString());
                         }
                     }
                 }
@@ -358,6 +399,9 @@ void MainWindow::slotCloseEpisode()
         ui->actionCreate_item->setEnabled(false);
         ui->actionAdd_Interior->setEnabled(false);
         ui->actionClose_episode->setEnabled(false);
+
+        ui->graphicsView->setSceneItem(0);
+        ui->graphicsView->update();
     }
 }
 
@@ -400,7 +444,8 @@ void MainWindow::slotOpenFileToSubject()
         if(m_item_creator)
         {
             m_item_creator->createSubjectItem(ui->graphicsView->sceneItem(),
-                                              file_path);
+                                              file_path,
+                                              ItemDialog::getItemTitle());
 
             ui->graphicsView->update();
         }

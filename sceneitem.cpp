@@ -13,9 +13,9 @@ SceneItem::SceneItem(QuestScene* scene, QString title) :
 
     setProperty("description", QVariant());
     setProperty("background", QVariant());
-    setProperty("order", QVariant());
-    setProperty("in_effect", QVariant());
-    setProperty("out_effect", QVariant());
+//    setProperty("order", QVariant());
+//    setProperty("in_effect", QVariant());
+//    setProperty("out_effect", QVariant());
 }
 
 QVariant SceneItem::toJson(QString save_path,

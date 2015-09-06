@@ -134,11 +134,17 @@ void QuestScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     case ModeNormal:
         if(m_active_item)
         {
-            m_active_item->setPos(event->scenePos().x() - m_offset_x,
-                                  event->scenePos().y() - m_offset_y);
+            int item_x = event->scenePos().x() - m_offset_x;
+            int item_y = event->scenePos().y() - m_offset_y;
 
-            emit itemPosChanged(m_item_to_id.value(m_active_item),
-                                m_active_item->pos());
+            m_active_item->setPos(item_x, item_y);
+
+//            emit itemPosChanged(m_item_to_id.value(m_active_item),
+//                                m_active_item->pos());
+
+//            emit itemPosChanged(m_item_to_id.value(m_active_item),
+//                                item_x / width(),
+//                                item_y / height());
         }
     default:
         break;
@@ -169,7 +175,7 @@ void QuestScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent*)
 
 //            qDebug() << double_polygon;
 
-            emit itemCreated(ItemDialog::getItemTitle(), double_polygon);
+            emit itemCreated("", double_polygon);
 
             m_polygon_item = 0;
             m_item_polygon.clear();
@@ -189,12 +195,17 @@ void QuestScene::mouseReleaseEvent(QGraphicsSceneMouseEvent*)
     switch(m_mode)
     {
     case ModeNormal:
-
-        m_active_item = 0;
-        m_offset_x = m_offset_y = 0;
-
+        if(m_active_item)
+        {
+            emit itemPosChanged(m_item_to_id.value(m_active_item),
+                                m_active_item->x() / width(),
+                                m_active_item->y() / height());
+            m_active_item = 0;
+            m_offset_x = m_offset_y = 0;
+        }
         break;
     case ModeCreateItem:
+
     default:
         break;
     }
@@ -241,7 +252,8 @@ int QuestScene::addIteriorItem(const QString& file_path,
         ret_id = scene_counter++;
         m_item_to_id.insert(item, ret_id);
 
-        item->setPos(x, y);
+        item->setPos(x * width(),
+                     y * height());
     }
 
     return ret_id;

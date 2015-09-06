@@ -21,7 +21,7 @@ QString ItemDialog::getItemTitle(QWidget *parent)
     dlg.exec();
 
     if(dlg.ui->leItemName->text().isEmpty())
-        return "Item" + QString::number(item_counter++);
+        return "Subject" + QString::number(item_counter++);
     else
         return dlg.ui->leItemName->text();
 }

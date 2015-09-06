@@ -92,7 +92,8 @@ protected:
 signals:
     void itemCreated(QString, QPolygonF);
 
-    void itemPosChanged(int, QPointF);
+//    void itemPosChanged(int, QPointF);
+    void itemPosChanged(int, qreal x, qreal y);
 
 public slots:
 

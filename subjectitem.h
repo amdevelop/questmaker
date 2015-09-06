@@ -7,6 +7,8 @@ class SubjectItem : public InteriorItem
 {
     friend class ItemCreator;
 
+    QVariant toJson(QString save_path, bool *ok);
+
 protected:
     SubjectItem(QString title = QString());
 };

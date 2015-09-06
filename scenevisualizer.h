@@ -38,7 +38,7 @@ public slots:
     void slotSceneRemoved(SceneItem*);
 
     // model changing...
-    void slotItemPosChanged(int id, QPointF point);
+    void slotItemPosChanged(int id, qreal x, qreal y);
 
 signals:
     void itemCreated(QString, QPolygonF);

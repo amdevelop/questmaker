@@ -33,7 +33,8 @@ ActItem* ItemCreator::createActItem()
 {
     ActItem *tmp_item = new ActItem;
 
-    tmp_item->setData(tr("Act") + QString::number(tmp_item->id()), Qt::DisplayRole);
+    tmp_item->setData(tr("Act") + QString::number(tmp_item->id()),
+                      Qt::DisplayRole);
 
     m_episode->appendRow(tmp_item);
 
@@ -44,6 +45,10 @@ SceneItem* ItemCreator::createSceneItem(ActItem* item, QuestScene* scene)
 {
     SceneItem *scene_item = new SceneItem(scene, "");
 
+    scene_item->setData(tr("Scene") + QString::number(scene_item->id()),
+                        Qt::DisplayRole);
+
+
     item->appendRow(scene_item);
 
     return scene_item;
@@ -52,6 +57,10 @@ SceneItem* ItemCreator::createSceneItem(ActItem* item, QuestScene* scene)
 ItemItem* ItemCreator::createItemItem(SubjectItem* parent, QString title, QPolygonF polygon)
 {
     ItemItem *tmp_item = new ItemItem(title, polygon);
+
+    tmp_item->setData(tr("Item") + QString::number(tmp_item->id()),
+                        Qt::DisplayRole);
+
     parent->appendRow(tmp_item);
 
     return tmp_item;
@@ -62,7 +71,7 @@ SubjectItem* ItemCreator::createSubjectItem(SceneItem* parent,
                                          QString title)
 {
     SubjectItem *tmp_item = new SubjectItem(title);
-    tmp_item->setProperty("image_path", file_path);
+    tmp_item->setProperty("image", file_path);
     parent->appendRow(tmp_item);
 
     return tmp_item;
@@ -73,7 +82,11 @@ InteriorItem* ItemCreator::createInteriorItem(SceneItem* parent,
                            QString title)
 {
     InteriorItem *tmp_item = new InteriorItem(title);
-    tmp_item->setProperty("image_path", file_path);
+    tmp_item->setProperty("image", file_path);
+
+//    tmp_item->setData(tr("Interior") + QString::number(tmp_item->id()),
+//                        Qt::DisplayRole);
+
     parent->appendRow(tmp_item);
 
     return tmp_item;

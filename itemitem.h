@@ -29,7 +29,7 @@ public:
     }
 
 
-    QVariant toJson(QString save_path, bool *);
+    QVariant toJson(QString, bool *);
 
 protected:
     ItemItem(QString title, QPolygonF polygon = QPolygonF(), ItemType type = QuestItem::TypeItemItem);
