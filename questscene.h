@@ -4,7 +4,6 @@
 #include <QGraphicsScene>
 #include <QMap>
 
-
 class SceneItem;
 
 class QuestScene : public QGraphicsScene

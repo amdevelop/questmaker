@@ -14,7 +14,11 @@
 
 #include "itembackground.h"
 
+#ifdef WIN32
+#include <qjson/src/serializer.h>
+#else
 #include <qjson/serializer.h>
+#endif
 
 ItemCreator::ItemCreator(QObject *parent) :
     QStandardItemModel(parent),

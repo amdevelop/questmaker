@@ -16,8 +16,13 @@
 #include "itembackground.h"
 #include "questnamedialog.h"
 
+#ifdef WIN32
+#include <qjson/src/parser.h>
+#include <qjson/src/serializer.h>
+#else
 #include <qjson/parser.h>
 #include <qjson/serializer.h>
+#endif
 
 #include "itemdialog.h"
 
