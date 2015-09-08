@@ -238,13 +238,22 @@ bool QuestScene::setBackgroundPixmap(const QString& file_path)
 }
 
 int QuestScene::addIteriorItem(const QString& file_path,
-                               qreal x,
-                               qreal y)
+                               qreal x, qreal y,
+                               qreal scale_scene_w, qreal scale_scene_h)
 {
     QGraphicsItem* item = 0;
     int ret_id = -1;
 
     QPixmap pixmap(file_path);
+
+    if(scale_scene_w == -1 && scale_scene_w == -1)
+    {
+        scale_scene_w = pixmap.width() / width();
+        scale_scene_h = pixmap.height() / height();
+    }
+
+    pixmap = pixmap.scaled(width() * scale_scene_w,
+                           height() * scale_scene_h);
 
     if(!pixmap.isNull())
     {
@@ -254,6 +263,7 @@ int QuestScene::addIteriorItem(const QString& file_path,
 
         item->setPos(x * width(),
                      y * height());
+
     }
 
     return ret_id;

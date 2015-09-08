@@ -48,10 +48,14 @@ public:
 
     SubjectItem* createSubjectItem(SceneItem* parent,
                                    QString file_path,
+                                   qreal scene_w,
+                                   qreal scene_h,
                                    QString title = QString());
 
     InteriorItem* createInteriorItem(SceneItem*,
                                      QString file_path,
+                                     qreal scene_w,
+                                     qreal scene_h,
                                      QString title = QString());
 
 

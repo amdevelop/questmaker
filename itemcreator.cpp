@@ -72,10 +72,17 @@ ItemItem* ItemCreator::createItemItem(SubjectItem* parent, QString title, QPolyg
 
 SubjectItem* ItemCreator::createSubjectItem(SceneItem* parent,
                                          QString file_path,
+                                         qreal scene_w,
+                                         qreal scene_h,
                                          QString title)
 {
     SubjectItem *tmp_item = new SubjectItem(title);
+
+    QPixmap pixmap(file_path);
+
     tmp_item->setProperty("image", file_path);
+    tmp_item->setProperty("scene_scale_x", pixmap.width() / scene_w);
+    tmp_item->setProperty("scene_scale_y", pixmap.height() / scene_h);
     parent->appendRow(tmp_item);
 
     return tmp_item;
@@ -83,13 +90,17 @@ SubjectItem* ItemCreator::createSubjectItem(SceneItem* parent,
 
 InteriorItem* ItemCreator::createInteriorItem(SceneItem* parent,
                            QString file_path,
+                           qreal scene_w,
+                           qreal scene_h,
                            QString title)
 {
     InteriorItem *tmp_item = new InteriorItem(title);
-    tmp_item->setProperty("image", file_path);
 
-//    tmp_item->setData(tr("Interior") + QString::number(tmp_item->id()),
-//                        Qt::DisplayRole);
+    QPixmap pixmap(file_path);
+
+    tmp_item->setProperty("image", file_path);
+    tmp_item->setProperty("scene_scale_x", pixmap.width() / scene_w);
+    tmp_item->setProperty("scene_scale_y", pixmap.height() / scene_h);
 
     parent->appendRow(tmp_item);
 

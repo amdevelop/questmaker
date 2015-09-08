@@ -219,7 +219,9 @@ void MainWindow::slotFileOpen()
                             {
                                 tmp_item = m_item_creator->createInteriorItem(
                                             scene_item,
-                                            interior_path);
+                                            interior_path,
+                                            ui->graphicsView->scene()->width(),
+                                            ui->graphicsView->scene()->height());
                             }
                             else if(item_map.value("type").toString() == "subject")
                             {
@@ -227,6 +229,8 @@ void MainWindow::slotFileOpen()
                                 tmp_item = subj_item = m_item_creator->createSubjectItem(
                                             scene_item,
                                             interior_path,
+                                            ui->graphicsView->scene()->width(),
+                                            ui->graphicsView->scene()->height(),
                                             item_map.value("title").toString());
 
                                 QVariantList polygons = item_map.value("polygons").toList();
@@ -423,7 +427,9 @@ void MainWindow::slotOpenFileToInterior()
             if(m_item_creator)
             {
                 m_item_creator->createInteriorItem(ui->graphicsView->sceneItem(),
-                                                   file_path);
+                                                   file_path,
+                                                   ui->graphicsView->scene()->width(),
+                                                   ui->graphicsView->scene()->height());
 
                 ui->graphicsView->update();
             }
@@ -450,6 +456,8 @@ void MainWindow::slotOpenFileToSubject()
         {
             m_item_creator->createSubjectItem(ui->graphicsView->sceneItem(),
                                               file_path,
+                                              ui->graphicsView->scene()->width(),
+                                              ui->graphicsView->scene()->height(),
                                               ItemDialog::getItemTitle());
 
             ui->graphicsView->update();

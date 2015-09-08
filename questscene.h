@@ -76,7 +76,9 @@ public:
 
     bool setBackgroundPixmap(const QString& file_path);
 
-    int addIteriorItem(const QString& file_path, qreal x, qreal y);
+    int addIteriorItem(const QString& file_path,
+                       qreal x, qreal y,
+                       qreal scale_scene_w = -1, qreal scale_scene_h = -1);
     bool addSubjectItem(const QString& file_path);
 
     void createItem();

@@ -62,10 +62,13 @@ void SceneVisualizer::update()
                 QString file_path =
                         interior_item->property("image").toString();
 
+
                 int id = m_scene->addIteriorItem(
                             file_path,
                             interior_item->sceneX(),
-                            interior_item->sceneY());
+                            interior_item->sceneY(),
+                            interior_item->property("scene_scale_x").toDouble(),
+                            interior_item->property("scene_scale_y").toDouble());
 
                 if(id != -1)
                     m_graph_to_model.insert(id, interior_item);
