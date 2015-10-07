@@ -7,20 +7,27 @@
 #include "itemitem.h"
 
 #include <QMessageBox>
+#include <QItemSelectionModel>
 
 SceneVisualizer::SceneVisualizer(QWidget* parent)
     : QGraphicsView(parent)
 {
     m_item = 0;
+    m_selection_model = 0;
 
     m_scene = new QuestScene();
 
     m_scene->setSceneRect(0, 0, 300, 200);
 
-    connect(m_scene, SIGNAL(itemCreated(QString,QPolygonF)), SIGNAL(itemCreated(QString,QPolygonF)));
+    connect(m_scene,
+            SIGNAL(itemCreated(QString,QPolygonF)),
+            SIGNAL(itemCreated(QString,QPolygonF)));
     connect(m_scene,
             SIGNAL(itemPosChanged(int,qreal,qreal)),
             SLOT(slotItemPosChanged(int,qreal,qreal)));
+    connect(m_scene,
+            SIGNAL(itemSelected(int)),
+            SLOT(slotItemSelected(int)));
 
 
     setScene(m_scene);
@@ -84,8 +91,6 @@ void SceneVisualizer::update()
                         m_scene->addPolygon(item_item->drawPolygon(m_scene->width(), m_scene->height()),
                                             QPen(Qt::blue, 2),
                                             QBrush(QColor(255,255,255,127)));
-
-
                 }
             }
         }
@@ -148,4 +153,14 @@ void SceneVisualizer::slotItemPosChanged(int id,
     item->setSceneY(y);
 
     update();
+}
+
+void SceneVisualizer::slotItemSelected(int id)
+{
+    if(m_selection_model)
+    {
+        InteriorItem * item = m_graph_to_model.value(id);
+        m_selection_model->select(item->index(),
+                                  QItemSelectionModel::Select);
+    }
 }

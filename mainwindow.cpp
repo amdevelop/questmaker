@@ -137,6 +137,9 @@ void MainWindow::slotFileOpen()
                 m_item_creator = new ItemCreator;
                 ui->treeView->setModel(m_item_creator);
 
+                ui->graphicsView->setSelectionModel(
+                            m_item_creator->selectionModel());
+
                 ui->actionPublish->setEnabled(true);
                 ui->actionClose_episode->setEnabled(true);
 
@@ -180,8 +183,6 @@ void MainWindow::slotFileOpen()
                             .toList();
 
                     foreach (QVariant scene_var, scenes) {
-
-//                        QuestItem *scene_item = createScene();
 
                         SceneItem* scene_item = m_item_creator->createSceneItem(act_item, 0);
 
@@ -250,29 +251,16 @@ void MainWindow::slotFileOpen()
 
                             if(tmp_item)
                             {
-                                tmp_item->setProperty("title", item_map.value("title"));
+                                tmp_item->setProperty("title",
+                                                      item_map.value("title"));
+                                tmp_item->setProperty("scene_scale_x",
+                                                      item_map.value("scene_scale_x"));
+                                tmp_item->setProperty("scene_scale_y",
+                                                      item_map.value("scene_scale_y"));
 
                                 tmp_item->setSceneX(item_map.value("scene_x").toReal());
                                 tmp_item->setSceneY(item_map.value("scene_y").toReal());
-
-//                                                            foreach (QString key, item_map.keys()) {
-//                                                                if(
-//                                                                        item_map.value(key).type() != QVariant::List &&
-//                                                                        item_map.value(key).type() != QVariant::Map )
-//                                                                    if(key != "id")
-//                                                                        item_item->setProperty(key, item_map.value(key));
-//                                                            }
-
                             }
-                            //                            QuestItem *item_item = createItem(
-//                                        item_map.value("title").toString(),
-//                                        polygon);
-
-
-//                            if(item_map.value("detail").type() != QVariant::Invalid &&
-//                                    item_map.value("detail").toString() != "")
-//                                item_item->setProperty("detail",
-//                                                       scene_path + "/" + item_map.value("detail").toString());
                         }
                     }
                 }
@@ -384,7 +372,12 @@ void MainWindow::slotCreateEpisode()
             SLOT(slotSceneRemoved(SceneItem*)));
 
     ui->treeView->setModel(m_item_creator);
-    ui->treeView->setSelectionModel(m_item_creator->selectionModel());
+
+    ui->treeView->setSelectionModel(
+                m_item_creator->selectionModel());
+    ui->graphicsView->setSelectionModel(
+                m_item_creator->selectionModel());
+
     createAct();
 
     ui->treeView->expandAll();
@@ -408,6 +401,8 @@ void MainWindow::slotCloseEpisode()
         ui->actionCreate_item->setEnabled(false);
         ui->actionAdd_Interior->setEnabled(false);
         ui->actionClose_episode->setEnabled(false);
+
+        ui->graphicsView->setSelectionModel(0);
 
         ui->graphicsView->setSceneItem(0);
         ui->graphicsView->update();

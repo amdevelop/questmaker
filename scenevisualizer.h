@@ -10,6 +10,7 @@ class QuestScene;
 class InteriorItem;
 
 class QStandardItem;
+class QItemSelectionModel;
 
 class SceneVisualizer : public QGraphicsView
 {
@@ -19,6 +20,8 @@ class SceneVisualizer : public QGraphicsView
     QuestScene *m_scene;
 
     QMap <int, InteriorItem*> m_graph_to_model;
+
+    QItemSelectionModel* m_selection_model;
 public:
     SceneVisualizer(QWidget* parent = 0);
 
@@ -33,6 +36,11 @@ public:
 
     void update();
 
+    void setSelectionModel(QItemSelectionModel* selection_model)
+    {
+        m_selection_model = selection_model;
+    }
+
 public slots:
     void slotRowsRemoved(const QModelIndex&, int, int);
     void slotSceneRemoved(SceneItem*);
@@ -40,6 +48,7 @@ public slots:
     // model changing...
     void slotItemPosChanged(int id, qreal x, qreal y);
 
+    void slotItemSelected(int);
 signals:
     void itemCreated(QString, QPolygonF);
 };

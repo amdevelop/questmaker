@@ -96,6 +96,8 @@ signals:
 //    void itemPosChanged(int, QPointF);
     void itemPosChanged(int, qreal x, qreal y);
 
+    void itemSelected(int);
+
 public slots:
 
 };

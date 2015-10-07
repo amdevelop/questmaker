@@ -96,6 +96,8 @@ void QuestScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                     {
                         m_offset_x = event->scenePos().x() - m_active_item->x();
                         m_offset_y = event->scenePos().y() - m_active_item->y();
+
+                        emit itemSelected(m_item_to_id.value(m_active_item));
                     }
 
                     break;
@@ -263,7 +265,6 @@ int QuestScene::addIteriorItem(const QString& file_path,
 
         item->setPos(x * width(),
                      y * height());
-
     }
 
     return ret_id;
