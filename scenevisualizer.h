@@ -8,6 +8,7 @@ class SceneItem;
 class QuestScene;
 
 class InteriorItem;
+class ItemController;
 
 class QStandardItem;
 class QItemSelectionModel;
@@ -18,6 +19,8 @@ class SceneVisualizer : public QGraphicsView
 
     SceneItem *m_item;
     QuestScene *m_scene;
+
+    ItemController* m_controller;
 
     QMap <int, InteriorItem*> m_graph_to_model;
 
@@ -47,6 +50,7 @@ public slots:
 
     // model changing...
     void slotItemPosChanged(int id, qreal x, qreal y);
+    void slotItemUpdate(int id, QRectF rect);
 
     void slotItemSelected(int);
 signals:

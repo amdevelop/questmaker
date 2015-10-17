@@ -52,6 +52,5 @@ QPolygonF ItemItem::drawPolygon(int w, int h) const
                                 point.y() * h);
     }
 
-    qDebug() << m_polygon << draw_polygon;
     return draw_polygon;
 }

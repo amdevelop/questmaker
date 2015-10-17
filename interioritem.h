@@ -45,6 +45,10 @@ public:
         return m_scene_y;
     }
 
+    int id() const
+    {
+        return m_id;
+    }
 
     QVariant toJson(QString save_path, bool *);
 };

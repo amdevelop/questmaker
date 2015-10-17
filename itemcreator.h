@@ -25,7 +25,7 @@ class ItemCreator : public QStandardItemModel
     Q_OBJECT
 
     EpisodeItem* m_episode;
-    QItemSelectionModel m_selection_model;
+   // QItemSelectionModel m_selection_model;
 
 public:
     explicit ItemCreator(QObject *parent = 0);
@@ -39,7 +39,7 @@ public:
 
     QItemSelectionModel* selectionModel()
     {
-        return &m_selection_model;
+        return 0; // &m_selection_model;
     }
 
     ActItem* createActItem();

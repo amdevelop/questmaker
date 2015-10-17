@@ -138,7 +138,7 @@ void MainWindow::slotFileOpen()
                 ui->treeView->setModel(m_item_creator);
 
                 ui->graphicsView->setSelectionModel(
-                            m_item_creator->selectionModel());
+                            ui->treeView->selectionModel()); // m_item_creator->selectionModel());
 
                 ui->actionPublish->setEnabled(true);
                 ui->actionClose_episode->setEnabled(true);
@@ -373,10 +373,8 @@ void MainWindow::slotCreateEpisode()
 
     ui->treeView->setModel(m_item_creator);
 
-    ui->treeView->setSelectionModel(
-                m_item_creator->selectionModel());
     ui->graphicsView->setSelectionModel(
-                m_item_creator->selectionModel());
+                ui->treeView->selectionModel()); //m_item_creator->selectionModel());
 
     createAct();
 
@@ -385,7 +383,7 @@ void MainWindow::slotCreateEpisode()
     ui->actionPublish->setEnabled(true);
     ui->actionClose_episode->setEnabled(true);
 
-    slotTreeWidgetClicked(m_item_creator->selectionModel()->currentIndex());
+//    slotTreeWidgetClicked(m_item_creator->selectionModel()->currentIndex());
 }
 
 void MainWindow::slotCloseEpisode()

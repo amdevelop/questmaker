@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     questnamedialog.cpp \
     visualizermodel.cpp \
     subjectitem.cpp \
-    interioritem.cpp
+    interioritem.cpp \
+    itemcontroller.cpp
 #    makerlite.cpp
 
 HEADERS  += mainwindow.h \
@@ -46,7 +47,8 @@ HEADERS  += mainwindow.h \
     questnamedialog.h \
     visualizermodel.h \
     subjectitem.h \
-    interioritem.h
+    interioritem.h \
+    itemcontroller.h
 #    makerlite.h
 
 FORMS    += mainwindow.ui \

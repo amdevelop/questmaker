@@ -33,6 +33,8 @@ public:
 
     QuestItemNotifier *m_notifier;
 
+    int m_graphics_id;
+
 private:
     ItemType m_type;
 

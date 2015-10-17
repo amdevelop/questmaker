@@ -21,8 +21,8 @@
 #endif
 
 ItemCreator::ItemCreator(QObject *parent) :
-    QStandardItemModel(parent),
-    m_selection_model(this)
+    QStandardItemModel(parent)
+//    ,m_selection_model(this)
 {
    m_episode = new EpisodeItem(tr("Episode"));
    invisibleRootItem()->appendRow(m_episode);

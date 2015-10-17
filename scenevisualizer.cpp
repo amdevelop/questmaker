@@ -6,6 +6,8 @@
 #include "interioritem.h"
 #include "itemitem.h"
 
+#include "itemcontroller.h"
+
 #include <QMessageBox>
 #include <QItemSelectionModel>
 
@@ -14,6 +16,7 @@ SceneVisualizer::SceneVisualizer(QWidget* parent)
 {
     m_item = 0;
     m_selection_model = 0;
+    m_controller = 0;
 
     m_scene = new QuestScene();
 
@@ -25,6 +28,10 @@ SceneVisualizer::SceneVisualizer(QWidget* parent)
     connect(m_scene,
             SIGNAL(itemPosChanged(int,qreal,qreal)),
             SLOT(slotItemPosChanged(int,qreal,qreal)));
+    connect(m_scene,
+            SIGNAL(itemUpdate(int,QRectF)),
+            SLOT(slotItemUpdate(int,QRectF)));
+
     connect(m_scene,
             SIGNAL(itemSelected(int)),
             SLOT(slotItemSelected(int)));
@@ -42,8 +49,10 @@ void SceneVisualizer::setSceneItem(SceneItem* scene_item)
 
 void SceneVisualizer::update()
 {
-    m_scene->clear();
+//    m_scene->clear();
     m_scene->reset();
+
+    m_graph_to_model.clear();
 
     if(m_item)
     {
@@ -70,15 +79,18 @@ void SceneVisualizer::update()
                         interior_item->property("image").toString();
 
 
-                int id = m_scene->addIteriorItem(
+                m_scene->addIteriorItem(
                             file_path,
                             interior_item->sceneX(),
                             interior_item->sceneY(),
                             interior_item->property("scene_scale_x").toDouble(),
-                            interior_item->property("scene_scale_y").toDouble());
+                            interior_item->property("scene_scale_y").toDouble(),
+                            interior_item->id());
 
-                if(id != -1)
-                    m_graph_to_model.insert(id, interior_item);
+
+//                if(id != -1)
+                    m_graph_to_model.insert(interior_item->id(),
+                                            interior_item);
 
                 for(int j = 0;
                     j < interior_item->rowCount();
@@ -155,12 +167,35 @@ void SceneVisualizer::slotItemPosChanged(int id,
     update();
 }
 
+void SceneVisualizer::slotItemUpdate(int id, QRectF rect)
+{
+    InteriorItem * item = m_graph_to_model.value(id);
+
+    item->setSceneX(rect.x());
+    item->setSceneY(rect.y());
+    item->setProperty("scene_scale_x", rect.width());
+    item->setProperty("scene_scale_y", rect.height());
+
+    update();
+}
+
 void SceneVisualizer::slotItemSelected(int id)
 {
     if(m_selection_model)
     {
         InteriorItem * item = m_graph_to_model.value(id);
-        m_selection_model->select(item->index(),
-                                  QItemSelectionModel::Select);
+        qDebug() << m_selection_model->currentIndex();
+        qDebug() << item->index();
+        qDebug() << item->model()->indexFromItem(item);
+//        m_selection_model->select(item->model()->indexFromItem(item),
+//                                  QItemSelectionModel::Select);
+        m_selection_model->setCurrentIndex(item->index(),
+                                           QItemSelectionModel::SelectCurrent);
+
+//        if(!m_controller)
+//            m_controller = new ItemController(m_scene);
+
+//        m_controller->hold(item, id);
+
     }
 }

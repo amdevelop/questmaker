@@ -5,6 +5,8 @@
 
 #include "itemdialog.h"
 
+#include "itemcontroller.h"
+
 #include <QDebug>
 
 int QuestScene::scene_counter = 0;
@@ -23,8 +25,17 @@ QuestScene::QuestScene(QObject *parent) :
     m_scene_pixmap = 0;
 
     m_active_item = 0;
+    m_active_handel = 0;
+    m_active_id = -1;
 
     drawEmpty();
+
+    m_controller = new ItemController(this);
+}
+
+QuestScene::~QuestScene()
+{
+    delete m_controller;
 }
 
 void QuestScene::drawEmpty()
@@ -87,20 +98,26 @@ void QuestScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             foreach (QGraphicsItem* tmp_item, item_list) {
                 if(tmp_item != m_empty_scene)
                 {
-                    m_active_item = tmp_item;
-
-                    if(!m_item_to_id.keys().contains(m_active_item))
-                        m_active_item = 0;
-
-                    if(m_active_item)
+                    if(m_item_to_id.keys().contains(tmp_item))
                     {
-                        m_offset_x = event->scenePos().x() - m_active_item->x();
-                        m_offset_y = event->scenePos().y() - m_active_item->y();
-
+                        m_active_item = tmp_item;
+                        m_active_id = m_item_to_id.value(m_active_item);
                         emit itemSelected(m_item_to_id.value(m_active_item));
+                        m_controller->hold(m_active_item);
+                        m_active_handel = 0;
+
+                    }
+                    else if(m_controller->handelType(tmp_item) != ItemController::HandelInvalid)
+                    {
+                        m_active_handel = tmp_item;
                     }
 
-                    break;
+                    if(m_active_item || m_active_handel)
+                    {
+                        m_offset_x = event->scenePos().x() - tmp_item->x();
+                        m_offset_y = event->scenePos().y() - tmp_item->y();
+                        break;
+                    }
                 }
                 else
                     continue;
@@ -109,7 +126,10 @@ void QuestScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         else
         {
             if(m_active_item)
+            {
                 m_active_item = 0;
+                m_active_id = -1;
+            }
         }
     }
     default:
@@ -134,20 +154,28 @@ void QuestScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         }
         break;
     case ModeNormal:
-        if(m_active_item)
+    {
+        QGraphicsItem * move_item;
+
+        if(m_active_handel)
+            move_item = m_active_handel;
+        else
+            move_item = m_active_item;
+
+        if(move_item)
         {
             int item_x = event->scenePos().x() - m_offset_x;
             int item_y = event->scenePos().y() - m_offset_y;
 
-            m_active_item->setPos(item_x, item_y);
+            move_item->setPos(item_x, item_y);
 
-//            emit itemPosChanged(m_item_to_id.value(m_active_item),
-//                                m_active_item->pos());
-
-//            emit itemPosChanged(m_item_to_id.value(m_active_item),
-//                                item_x / width(),
-//                                item_y / height());
+            if(move_item == m_active_handel)
+                m_controller->moveHandel(move_item);
         }
+
+    }
+    case ModeResize:
+        break;
     default:
         break;
     }
@@ -197,14 +225,27 @@ void QuestScene::mouseReleaseEvent(QGraphicsSceneMouseEvent*)
     switch(m_mode)
     {
     case ModeNormal:
-        if(m_active_item)
+        if(m_active_handel)
+        {
+            QGraphicsItem *tl_item = m_controller->handel(ItemController::HandelTopLeft);
+
+            emit itemUpdate(m_item_to_id.value(m_controller->holdItem()),
+                            QRectF((tl_item->x() + m_offset_x) / width(),
+                                   (tl_item->y() + m_offset_y) / height(),
+                                   m_controller->boundingRect().size().width() / (float)width(),
+                                   m_controller->boundingRect().size().height() / (float)height()));
+        }
+        else if(m_active_item)
         {
             emit itemPosChanged(m_item_to_id.value(m_active_item),
                                 m_active_item->x() / width(),
                                 m_active_item->y() / height());
-            m_active_item = 0;
-            m_offset_x = m_offset_y = 0;
         }
+
+        m_active_item = 0;
+        m_active_handel = 0;
+
+        m_offset_x = m_offset_y = 0;
         break;
     case ModeCreateItem:
 
@@ -239,12 +280,12 @@ bool QuestScene::setBackgroundPixmap(const QString& file_path)
     }
 }
 
-int QuestScene::addIteriorItem(const QString& file_path,
-                               qreal x, qreal y,
-                               qreal scale_scene_w, qreal scale_scene_h)
+bool QuestScene::addIteriorItem(const QString& file_path,
+                                qreal x, qreal y,
+                                qreal scale_scene_w, qreal scale_scene_h,
+                                int id)
 {
     QGraphicsItem* item = 0;
-    int ret_id = -1;
 
     QPixmap pixmap(file_path);
 
@@ -260,14 +301,20 @@ int QuestScene::addIteriorItem(const QString& file_path,
     if(!pixmap.isNull())
     {
         item = addPixmap(pixmap);
-        ret_id = scene_counter++;
-        m_item_to_id.insert(item, ret_id);
+
+        m_item_to_id.insert(item, id);
+        m_id_to_item.insert(id, item);
 
         item->setPos(x * width(),
                      y * height());
-    }
 
-    return ret_id;
+        if(m_active_id == id)
+            m_controller->hold(item);
+
+        return true;
+    }
+    else
+        return false;
 }
 
 bool QuestScene::addSubjectItem(const QString& file_path)
@@ -285,7 +332,25 @@ bool QuestScene::addSubjectItem(const QString& file_path)
 
 void QuestScene::reset()
 {
+    QList<QGraphicsItem*> remove_list;
+
+    foreach (QGraphicsItem* item, items()) {
+        if(m_controller->handelType(item) ==
+                ItemController::HandelInvalid)
+
+            remove_list << item;
+    }
+
+    foreach (QGraphicsItem* item, remove_list) {
+        removeItem(item);
+    }
+
     m_scene_pixmap = 0;
     m_item_to_id.clear();
+    m_id_to_item.clear();
 }
 
+QGraphicsItem* QuestScene::graphicsItemFromId(int id)
+{
+    return m_id_to_item.value(id, 0);
+}

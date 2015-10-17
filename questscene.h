@@ -5,6 +5,8 @@
 #include <QMap>
 
 class SceneItem;
+class ItemController;
+
 
 class QuestScene : public QGraphicsScene
 {
@@ -29,7 +31,8 @@ class QuestScene : public QGraphicsScene
     enum QuestSceneMode
     {
         ModeNormal,
-        ModeCreateItem
+        ModeCreateItem,
+        ModeResize
     } m_mode;
 
 
@@ -38,6 +41,8 @@ class QuestScene : public QGraphicsScene
     SceneItem *m_scene_item;
 
     QGraphicsItem* m_active_item;
+    QGraphicsItem* m_active_handel;
+    int m_active_id;
 
     QList <QGraphicsItem*> m_interior;
     QList <QGraphicsItem*> m_subjects;
@@ -46,9 +51,13 @@ class QuestScene : public QGraphicsScene
     qreal m_offset_y;
 
     QMap <QGraphicsItem*, int> m_item_to_id;
+    QMap <int, QGraphicsItem*> m_id_to_item;
+
+    ItemController* m_controller;
 
 public:
     explicit QuestScene(QObject *parent = 0);
+    ~QuestScene();
 
     QString title() const
     {
@@ -76,13 +85,16 @@ public:
 
     bool setBackgroundPixmap(const QString& file_path);
 
-    int addIteriorItem(const QString& file_path,
-                       qreal x, qreal y,
-                       qreal scale_scene_w = -1, qreal scale_scene_h = -1);
+    bool addIteriorItem(const QString& file_path,
+                        qreal x, qreal y,
+                        qreal scale_scene_w = -1, qreal scale_scene_h = -1,
+                        int id = -1);
     bool addSubjectItem(const QString& file_path);
 
     void createItem();
     void endCreateItem();
+
+    QGraphicsItem* graphicsItemFromId(int id);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -95,6 +107,7 @@ signals:
 
 //    void itemPosChanged(int, QPointF);
     void itemPosChanged(int, qreal x, qreal y);
+    void itemUpdate(int, QRectF);
 
     void itemSelected(int);
 
