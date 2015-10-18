@@ -12,37 +12,64 @@ ItemController::ItemController(QuestScene* scene)
 
     m_items = QVector<QGraphicsItem*>(HandelBottomLeft + 1);
 
-    m_handle_size = 10;
+    m_handle_size = 6;
     m_hold_item = 0;
 
     QGraphicsItem *tmp_item;
-    tmp_item = m_scene->addEllipse(0,0,10,10,QPen(Qt::red, 2), QBrush(Qt::red));
+    tmp_item = m_scene->addEllipse(0,0,m_handle_size,m_handle_size,QPen(Qt::red, 2), QBrush(Qt::red));
     m_item_to_type.insert(tmp_item,
                           HandelTopLeft);
     m_items[HandelTopLeft] = tmp_item;
     tmp_item->hide();
     tmp_item->setZValue(1000 + HandelTopLeft);
 
-    tmp_item = m_scene->addEllipse(0,0,10,10,QPen(Qt::red, 2), QBrush(Qt::red));
+    tmp_item = m_scene->addEllipse(0,0,m_handle_size,m_handle_size,QPen(Qt::red, 2), QBrush(Qt::red));
     m_item_to_type.insert(tmp_item,
                           HandelTopRight);
     m_items[HandelTopRight] = tmp_item;
     tmp_item->hide();
     tmp_item->setZValue(1000 + HandelTopRight);
 
-    tmp_item = m_scene->addEllipse(0,0,10,10,QPen(Qt::red, 2), QBrush(Qt::red));
+    tmp_item = m_scene->addEllipse(0,0,m_handle_size,m_handle_size,QPen(Qt::red, 2), QBrush(Qt::red));
     m_item_to_type.insert(tmp_item,
                           HandelBottomRight);
     m_items[HandelBottomRight] = tmp_item;
     tmp_item->hide();
     tmp_item->setZValue(1000 + HandelBottomRight);
 
-    tmp_item = m_scene->addEllipse(0,0,10,10,QPen(Qt::red, 2), QBrush(Qt::red));
+    tmp_item = m_scene->addEllipse(0,0,m_handle_size,m_handle_size,QPen(Qt::red, 2), QBrush(Qt::red));
     m_item_to_type.insert(tmp_item,
                           HandelBottomLeft);
     m_items[HandelBottomLeft] = tmp_item;
     tmp_item->hide();
     tmp_item->setZValue(1000 + HandelBottomLeft);
+
+
+    m_lines = QVector<QGraphicsLineItem*>(LineBottom + 1);
+
+    m_lines[LineLeft] = m_scene->addLine(QLineF(QPointF(0,0),
+                                               QPointF(0,0)),
+                                         QPen(Qt::red, 1));
+    m_lines[LineLeft]->setZValue(1000);
+    m_lines[LineLeft]->hide();
+
+    m_lines[LineTop] = m_scene->addLine(QLineF(QPointF(),
+                                               QPointF()),
+                                        QPen(Qt::red, 1));
+    m_lines[LineTop]->setZValue(1000);
+    m_lines[LineTop]->hide();
+
+    m_lines[LineRight] = m_scene->addLine(QLineF(QPointF(),
+                                               QPointF()),
+                                          QPen(Qt::red, 1));
+    m_lines[LineRight]->setZValue(1000);
+    m_lines[LineRight]->hide();
+
+    m_lines[LineBottom] = m_scene->addLine(QLineF(QPointF(),
+                                               QPointF()),
+                                           QPen(Qt::red, 1));
+    m_lines[LineBottom]->setZValue(1000);
+    m_lines[LineBottom]->hide();
 }
 
 void ItemController::hold(QGraphicsItem *item)
@@ -68,6 +95,8 @@ void ItemController::hold(QGraphicsItem *item)
     handel_item->setPos(item->x() + item->boundingRect().left() - m_handle_size / 2,
                         item->y() + item->boundingRect().bottom() - m_handle_size / 2);
     handel_item->show();
+
+    drawLines();
 }
 
 void ItemController::addHandel(HandelType type,
@@ -82,6 +111,11 @@ QGraphicsItem* ItemController::handel(HandelType type)
         return m_items[type];
     else
         return 0;
+}
+
+bool ItemController::contains(QGraphicsItem* item)
+{
+    return m_items.contains(item) || m_lines.contains((QGraphicsLineItem*)item);
 }
 
 ItemController::HandelType ItemController::handelType(QGraphicsItem* item) const
@@ -138,10 +172,31 @@ void ItemController::moveHandel(HandelType type, QPointF)
     default:
         break;
     }
+
+    drawLines();
 }
 
 QRectF ItemController::boundingRect() const
 {
     return QRectF(m_items[HandelTopLeft]->pos(),
                   m_items[HandelBottomRight]->pos());
+}
+
+void ItemController::drawLines()
+{
+    m_lines[LineLeft]->setLine(QLineF(m_items[HandelTopLeft]->pos() + QPointF(m_handle_size / 2, m_handle_size / 2),
+                                      m_items[HandelBottomLeft]->pos() + QPointF(m_handle_size / 2, m_handle_size / 2)));
+    m_lines[LineLeft]->show();
+
+    m_lines[LineTop]->setLine(QLineF(m_items[HandelTopLeft]->pos() + QPointF(m_handle_size / 2, m_handle_size / 2),
+                                      m_items[HandelTopRight]->pos() + QPointF(m_handle_size / 2, m_handle_size / 2)));
+    m_lines[LineTop]->show();
+
+    m_lines[LineRight]->setLine(QLineF(m_items[HandelTopRight]->pos() + QPointF(m_handle_size / 2, m_handle_size / 2),
+                                      m_items[HandelBottomRight]->pos() + QPointF(m_handle_size / 2, m_handle_size / 2)));
+    m_lines[LineRight]->show();
+
+    m_lines[LineBottom]->setLine(QLineF(m_items[HandelBottomLeft]->pos() + QPointF(m_handle_size / 2, m_handle_size / 2),
+                                      m_items[HandelBottomRight]->pos() + QPointF(m_handle_size / 2, m_handle_size / 2)));
+    m_lines[LineBottom]->show();
 }

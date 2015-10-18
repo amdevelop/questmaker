@@ -21,6 +21,14 @@ public:
         HandelBottomLeft,
         HandelMax
     };
+
+    enum LineType
+    {
+        LineLeft = 0,
+        LineTop,
+        LineRight,
+        LineBottom
+    };
 private:
     QuestScene* m_scene;
 
@@ -30,8 +38,12 @@ private:
     QMap <QGraphicsItem*, HandelType> m_item_to_type;
     QVector <QGraphicsItem*> m_items;
 
+    QVector <QGraphicsLineItem*> m_lines;
+
     // hold item, may be NULL
     QGraphicsItem* m_hold_item;
+
+    void drawLines();
 
     ItemController(QuestScene* scene);
 public:
@@ -44,6 +56,8 @@ public:
     void addHandel(HandelType type, QGraphicsItem*item);
     void moveHandel(HandelType type, QPointF point = QPointF());
     void moveHandel(QGraphicsItem*, QPointF point = QPointF());
+
+    bool contains(QGraphicsItem*);
 
     QRectF boundingRect() const;
 

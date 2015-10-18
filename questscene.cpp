@@ -171,6 +171,8 @@ void QuestScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
             if(move_item == m_active_handel)
                 m_controller->moveHandel(move_item);
+            else if(move_item == m_active_item)
+                m_controller->hold(m_active_item);
         }
 
     }
@@ -335,9 +337,7 @@ void QuestScene::reset()
     QList<QGraphicsItem*> remove_list;
 
     foreach (QGraphicsItem* item, items()) {
-        if(m_controller->handelType(item) ==
-                ItemController::HandelInvalid)
-
+        if(!m_controller->contains(item))
             remove_list << item;
     }
 
