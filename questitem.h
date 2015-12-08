@@ -23,7 +23,9 @@ public:
     enum ItemValueType
     {
         TypeValueNoType = 0,
-        TypeValueFileType
+        TypeValueFile,
+        TypeValueImage,
+        TypeValueText
     };
 
     enum QuestRoles
@@ -54,7 +56,10 @@ public:
         return m_type;
     }
 
-    void setProperty(QString, QVariant = QVariant(), ItemValueType valueType = TypeValueNoType);
+    void setProperty(QString,
+                     QVariant = QVariant(),
+                     ItemValueType valueType = TypeValueNoType);
+
     QVariant property(QString, bool *ok = 0);
 
     QMap<QString, QVariant> properties();

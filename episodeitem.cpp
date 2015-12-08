@@ -8,7 +8,7 @@ EpisodeItem::EpisodeItem(QString title) :
 {
     m_id = episode_counter++;
 
-    setProperty("cover", QVariant(), QuestItem::TypeValueFileType);
+    setProperty("cover", QVariant(), QuestItem::TypeValueImage);
     setProperty("description", QVariant());
 }
 

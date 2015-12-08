@@ -25,7 +25,6 @@ SOURCES += main.cpp\
     scenevisualizer.cpp \
     questitemnotifier.cpp \
     questnamedialog.cpp \
-    visualizermodel.cpp \
     subjectitem.cpp \
     interioritem.cpp \
     itemcontroller.cpp
@@ -45,7 +44,6 @@ HEADERS  += mainwindow.h \
     scenevisualizer.h \
     questitemnotifier.h \
     questnamedialog.h \
-    visualizermodel.h \
     subjectitem.h \
     interioritem.h \
     itemcontroller.h

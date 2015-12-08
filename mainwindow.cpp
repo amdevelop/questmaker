@@ -68,15 +68,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_item_creator = 0;
 
-    connect(ui->graphicsView, SIGNAL(itemCreated(QString,QPolygonF)), SLOT(slotItemCreated(QString,QPolygonF)));
+    connect(ui->graphicsView,
+            SIGNAL(itemCreated(QString,QPolygonF)),
+            SLOT(slotItemCreated(QString,QPolygonF)));
+
     ui->graphicsView->horizontalScrollBar()->hide();
     ui->graphicsView->verticalScrollBar()->hide();
 
-    connect(ui->tableView, SIGNAL(doubleClicked(QModelIndex)), SLOT(slotTableDoubleClicked(QModelIndex)));
+    connect(ui->tableView,
+            SIGNAL(doubleClicked(QModelIndex)),
+            SLOT(slotTableDoubleClicked(QModelIndex)));
 
-
-    move(m_settings.value("WindowPosX", 0).toInt(), m_settings.value("WindowPosY", 0).toInt());
-    resize(m_settings.value("WindowWidth", 500).toInt(), m_settings.value("WindowHeight", 500).toInt());
+    move(m_settings.value("WindowPosX", 0).toInt(),
+         m_settings.value("WindowPosY", 0).toInt());
+    resize(m_settings.value("WindowWidth", 500).toInt(),
+           m_settings.value("WindowHeight", 500).toInt());
 
     ui->splitter->setSizes(QList<int>() <<
                            m_settings.value("SplitterSceneSize", 250).toInt() <<
@@ -574,9 +580,11 @@ void MainWindow::slotTableDoubleClicked(QModelIndex item)
     {
         qDebug() << item.data(QuestItem::RoleEditType).toInt();
         switch (item.data(QuestItem::RoleEditType).toInt()) {
-        case QuestItem::TypeValueFileType:
+        case QuestItem::TypeValueFile:
             QFileDialog::getOpenFileName(this, "", m_settings.value("LastOpenedDir", QDir::homePath()).toString());
             break;
+        case QuestItem::TypeValueImage:
+        case QuestItem::TypeValueText:
         default:
             break;
         }

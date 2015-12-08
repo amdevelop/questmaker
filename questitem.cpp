@@ -22,7 +22,9 @@ QuestItem::~QuestItem()
     delete m_notifier;
 }
 
-void QuestItem::setProperty(QString name, QVariant value, ItemValueType)
+void QuestItem::setProperty(QString name,
+                            QVariant value,
+                            ItemValueType value_type)
 {
     QStandardItem *value_item = 0;
 
@@ -36,6 +38,7 @@ void QuestItem::setProperty(QString name, QVariant value, ItemValueType)
 
         QStandardItem *name_item = new QStandardItem;
         name_item->setData(name, Qt::DisplayRole);
+        name_item->setData(value_type, QuestItem::RoleEditType);
 
         value_item = new QStandardItem;
 
