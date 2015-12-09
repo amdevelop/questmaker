@@ -38,9 +38,9 @@ void QuestItem::setProperty(QString name,
 
         QStandardItem *name_item = new QStandardItem;
         name_item->setData(name, Qt::DisplayRole);
-        name_item->setData(value_type, QuestItem::RoleEditType);
 
         value_item = new QStandardItem;
+        value_item->setData(value_type, QuestItem::RoleEditType);
 
         m_property_model.setItem(
                     m_property_model.rowCount() - 1,

@@ -581,9 +581,23 @@ void MainWindow::slotTableDoubleClicked(QModelIndex item)
         qDebug() << item.data(QuestItem::RoleEditType).toInt();
         switch (item.data(QuestItem::RoleEditType).toInt()) {
         case QuestItem::TypeValueFile:
-            QFileDialog::getOpenFileName(this, "", m_settings.value("LastOpenedDir", QDir::homePath()).toString());
-            break;
         case QuestItem::TypeValueImage:
+        {
+            QString file_path = QFileDialog::getOpenFileName(this, "", m_settings.value("LastOpenedDir", QDir::homePath()).toString());
+
+            if(!file_path.isEmpty())
+            {
+                QStandardItemModel* standart_model =
+                        (QStandardItemModel*)item.model();
+
+                QStandardItem* standart_item =
+                        standart_model->itemFromIndex(item);
+
+                standart_item->setData(file_path,
+                                       Qt::DisplayRole);
+            }
+        }
+            break;
         case QuestItem::TypeValueText:
         default:
             break;
