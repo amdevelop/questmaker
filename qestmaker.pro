@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     questnamedialog.cpp \
     subjectitem.cpp \
     interioritem.cpp \
-    itemcontroller.cpp
+    itemcontroller.cpp \
+    textdialog.cpp
 #    makerlite.cpp
 
 HEADERS  += mainwindow.h \
@@ -46,13 +47,15 @@ HEADERS  += mainwindow.h \
     questnamedialog.h \
     subjectitem.h \
     interioritem.h \
-    itemcontroller.h
+    itemcontroller.h \
+    textdialog.h
 #    makerlite.h
 
 FORMS    += mainwindow.ui \
     itemdialog.ui \
     questnamedialog.ui \
-    makerlite.ui
+    makerlite.ui \
+    textdialog.ui
 
 CONFIG(release, debug|release) {
     #This is a release build

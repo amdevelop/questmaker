@@ -13,7 +13,8 @@ EpisodeItem::EpisodeItem(QString title) :
                 QuestItem::TypeValueImage);
 
     setProperty("description",
-                QVariant());
+                QVariant(),
+                QuestItem::TypeValueText);
 }
 
 QVariant EpisodeItem::toJson(QString save_path,

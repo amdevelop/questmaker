@@ -16,6 +16,8 @@
 #include "itembackground.h"
 #include "questnamedialog.h"
 
+#include "textdialog.h"
+
 #ifdef WIN32
 #include <qjson/src/parser.h>
 #include <qjson/src/serializer.h>
@@ -578,7 +580,12 @@ void MainWindow::slotTableDoubleClicked(QModelIndex item)
 {
     if(item.column() == 1)
     {
-        qDebug() << item.data(QuestItem::RoleEditType).toInt();
+        QStandardItemModel* standart_model =
+                (QStandardItemModel*)item.model();
+
+        QStandardItem* standart_item =
+                standart_model->itemFromIndex(item);
+
         switch (item.data(QuestItem::RoleEditType).toInt()) {
         case QuestItem::TypeValueFile:
         case QuestItem::TypeValueImage:
@@ -587,18 +594,18 @@ void MainWindow::slotTableDoubleClicked(QModelIndex item)
 
             if(!file_path.isEmpty())
             {
-                QStandardItemModel* standart_model =
-                        (QStandardItemModel*)item.model();
-
-                QStandardItem* standart_item =
-                        standart_model->itemFromIndex(item);
-
                 standart_item->setData(file_path,
                                        Qt::DisplayRole);
             }
         }
             break;
         case QuestItem::TypeValueText:
+        {
+            QString text;
+            if(TextDialog::getText(text))
+                standart_item->setData(text,
+                                       Qt::DisplayRole);
+        }
         default:
             break;
         }
