@@ -11,8 +11,8 @@ SceneItem::SceneItem(QuestScene* scene, QString title) :
 
     m_scene = scene;
 
-    setProperty("description", QVariant());
-    setProperty("background", QVariant());
+    setProperty("description", QVariant(), QuestItem::TypeValueText);
+    setProperty("background", QVariant(), QuestItem::TypeValueImage);
 //    setProperty("order", QVariant());
 //    setProperty("in_effect", QVariant());
 //    setProperty("out_effect", QVariant());
