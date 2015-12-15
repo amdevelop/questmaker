@@ -18,6 +18,8 @@ SceneVisualizer::SceneVisualizer(QWidget* parent)
     m_selection_model = 0;
     m_controller = 0;
 
+    m_model = 0;
+
     m_scene = new QuestScene();
 
     m_scene->setSceneRect(0, 0, 300, 200);
@@ -42,7 +44,8 @@ SceneVisualizer::SceneVisualizer(QWidget* parent)
 
 void SceneVisualizer::setSceneItem(SceneItem* scene_item)
 {
-    m_item = scene_item;
+    if(m_item != scene_item)
+        m_item = scene_item;
 }
 
 #include <QDebug>
@@ -199,3 +202,90 @@ void SceneVisualizer::slotItemSelected(int id)
 
     }
 }
+
+void SceneVisualizer::setModel(QStandardItemModel* model)
+{
+    if(m_model != model)
+    {
+        m_model = model;
+
+        // todo: нужен нормальной механизм update()
+        // потому что нельзя просто так взять и сделать update()
+    }
+}
+
+void SceneVisualizer::setSelectionModel(QItemSelectionModel* selection_model)
+{
+    m_selection_model = selection_model;
+
+    connect(m_selection_model,
+            SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+            SLOT(slotCurrentChanged(QModelIndex,QModelIndex)));
+}
+
+void SceneVisualizer::slotCurrentChanged(QModelIndex current,
+                                         QModelIndex)
+{
+    if(m_model)
+    {
+        QStandardItem* tmp_item = m_model->itemFromIndex(current);
+
+        m_item = dynamic_cast<SceneItem*>(tmp_item);
+
+        if(m_item)
+        {
+            update();
+        }
+        else
+        {
+            InteriorItem *inter_item =
+                    dynamic_cast<InteriorItem*>(tmp_item);
+
+            if(inter_item)
+            {
+                m_item = (SceneItem*)inter_item->parent();
+
+                update(); // wat?!
+
+                foreach(int id, m_graph_to_model.keys()) {
+                    if(m_graph_to_model.value(id)->index() ==
+                            inter_item->index())
+                    {
+                        m_scene->setActiveItem(id);
+                    }
+                }
+            }
+            else
+            {
+                ItemItem *item_item =
+                        dynamic_cast<ItemItem*>(tmp_item);
+
+                if(item_item)
+                {
+                    m_item = (SceneItem*)inter_item->parent()->parent();
+
+                    update(); // wat?!
+
+                    foreach(int id, m_graph_to_model.keys()) {
+                        if(m_graph_to_model.value(id)->index() ==
+                                inter_item->parent()->index())
+                        {
+                            m_scene->setActiveItem(id);
+                        }
+                    }
+                }
+                else
+                {
+                    m_item = 0;
+                    update();
+                }
+            }
+        }
+    }
+    else
+    {
+        m_item = 0;
+        update();
+    }
+}
+

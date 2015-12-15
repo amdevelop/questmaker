@@ -24,9 +24,12 @@ TextDialog::~TextDialog()
 }
 
 bool TextDialog::getText(QString &text,
+                         QString initial_text,
                          QWidget *parent)
 {
     TextDialog td(parent);
+
+    td.ui->textEdit->setText(initial_text);
 
     td.exec();
 

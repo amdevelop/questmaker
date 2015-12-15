@@ -17,7 +17,9 @@ public:
     explicit TextDialog(QWidget *parent = 0);
     ~TextDialog();
 
-    static bool getText(QString &text, QWidget *parent = 0);
+    static bool getText(QString &text,
+                        QString initial_text,
+                        QWidget *parent = 0);
 
     QString text() const;
 

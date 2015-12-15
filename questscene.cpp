@@ -28,6 +28,8 @@ QuestScene::QuestScene(QObject *parent) :
     m_active_handel = 0;
     m_active_id = -1;
 
+    m_move_flag = false;
+
     drawEmpty();
 
     m_controller = new ItemController(this);
@@ -172,7 +174,11 @@ void QuestScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             if(move_item == m_active_handel)
                 m_controller->moveHandel(move_item);
             else if(move_item == m_active_item)
+            {
+                if(m_move_flag)
+                    m_move_flag = true;
                 m_controller->hold(m_active_item);
+            }
         }
 
     }
@@ -239,9 +245,13 @@ void QuestScene::mouseReleaseEvent(QGraphicsSceneMouseEvent*)
         }
         else if(m_active_item)
         {
-            emit itemPosChanged(m_item_to_id.value(m_active_item),
-                                m_active_item->x() / width(),
-                                m_active_item->y() / height());
+            if(m_move_flag)
+            {
+                emit itemPosChanged(m_item_to_id.value(m_active_item),
+                                    m_active_item->x() / width(),
+                                    m_active_item->y() / height());
+                m_move_flag = false;
+            }
         }
 
         m_active_item = 0;
@@ -354,3 +364,11 @@ QGraphicsItem* QuestScene::graphicsItemFromId(int id)
 {
     return m_id_to_item.value(id, 0);
 }
+
+void QuestScene::setActiveItem(int id)
+{
+    QGraphicsItem* tmp_item = graphicsItemFromId(id);
+    m_controller->hold(tmp_item);
+    m_active_handel = 0;
+}
+

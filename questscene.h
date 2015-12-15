@@ -35,6 +35,8 @@ class QuestScene : public QGraphicsScene
         ModeResize
     } m_mode;
 
+    bool m_move_flag;
+
 
     QString m_title;
 
@@ -95,6 +97,8 @@ public:
     void endCreateItem();
 
     QGraphicsItem* graphicsItemFromId(int id);
+
+    void setActiveItem(int id);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

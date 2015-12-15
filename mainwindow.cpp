@@ -148,6 +148,8 @@ void MainWindow::slotFileOpen()
                 ui->graphicsView->setSelectionModel(
                             ui->treeView->selectionModel()); // m_item_creator->selectionModel());
 
+                ui->graphicsView->setModel(m_item_creator);
+
                 ui->actionPublish->setEnabled(true);
                 ui->actionClose_episode->setEnabled(true);
 
@@ -410,8 +412,9 @@ void MainWindow::slotCloseEpisode()
 
         ui->graphicsView->setSelectionModel(0);
 
-        ui->graphicsView->setSceneItem(0);
-        ui->graphicsView->update();
+//        ui->graphicsView->setSceneItem(0);
+//        ui->graphicsView->update();
+        ui->graphicsView->setModel(0);
     }
 }
 
@@ -484,8 +487,10 @@ QuestItem* MainWindow::createScene()
         scene_item->setData(tr("Scene") + QString::number(scene_item->id()),
                             Qt::DisplayRole);
 
-        ui->graphicsView->setSceneItem(scene_item);
-        ui->graphicsView->update();
+//        ui->graphicsView->setSceneItem(scene_item);
+//        ui->graphicsView->update();
+
+        ui->graphicsView->setModel(m_item_creator);
         ui->treeView->setCurrentIndex(scene_item->index());
         ui->tableView->setModel(scene_item->propertyModel());
     }
@@ -602,7 +607,8 @@ void MainWindow::slotTableDoubleClicked(QModelIndex item)
         case QuestItem::TypeValueText:
         {
             QString text;
-            if(TextDialog::getText(text))
+            if(TextDialog::getText(text,
+                                   standart_item->data(Qt::DisplayRole).toString()))
                 standart_item->setData(text,
                                        Qt::DisplayRole);
         }
@@ -707,8 +713,8 @@ void MainWindow::setActiveSceneFromItem(QuestItem* item)
                 break;
         }
 
-    ui->graphicsView->setSceneItem(tmp_item);
-    ui->graphicsView->update();
+//    ui->graphicsView->setSceneItem(tmp_item);
+//    ui->graphicsView->update();
 }
 
 /**
