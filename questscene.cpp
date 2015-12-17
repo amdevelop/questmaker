@@ -344,6 +344,9 @@ bool QuestScene::addSubjectItem(const QString& file_path)
 
 void QuestScene::reset()
 {
+    // нельзя просто так взять и сделать clear()
+    // потому что есть еще служебные итемы
+    // типа контроллера
     QList<QGraphicsItem*> remove_list;
 
     foreach (QGraphicsItem* item, items()) {
@@ -358,6 +361,9 @@ void QuestScene::reset()
     m_scene_pixmap = 0;
     m_item_to_id.clear();
     m_id_to_item.clear();
+
+    m_controller->release();
+    m_controller->hide();
 }
 
 QGraphicsItem* QuestScene::graphicsItemFromId(int id)

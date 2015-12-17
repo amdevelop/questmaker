@@ -52,7 +52,7 @@ void SceneVisualizer::setSceneItem(SceneItem* scene_item)
 
 void SceneVisualizer::update()
 {
-//    m_scene->clear();
+    //    m_scene->clear();
     m_scene->reset();
 
     m_graph_to_model.clear();
@@ -91,9 +91,9 @@ void SceneVisualizer::update()
                             interior_item->id());
 
 
-//                if(id != -1)
-                    m_graph_to_model.insert(interior_item->id(),
-                                            interior_item);
+                //                if(id != -1)
+                m_graph_to_model.insert(interior_item->id(),
+                                        interior_item);
 
                 for(int j = 0;
                     j < interior_item->rowCount();
@@ -132,8 +132,8 @@ void SceneVisualizer::endCreateItem()
 }
 
 void SceneVisualizer::slotRowsRemoved(const QModelIndex&,
-                      int,
-                      int)
+                                      int,
+                                      int)
 {
     update();
 }
@@ -190,15 +190,15 @@ void SceneVisualizer::slotItemSelected(int id)
         qDebug() << m_selection_model->currentIndex();
         qDebug() << item->index();
         qDebug() << item->model()->indexFromItem(item);
-//        m_selection_model->select(item->model()->indexFromItem(item),
-//                                  QItemSelectionModel::Select);
+        //        m_selection_model->select(item->model()->indexFromItem(item),
+        //                                  QItemSelectionModel::Select);
         m_selection_model->setCurrentIndex(item->index(),
                                            QItemSelectionModel::SelectCurrent);
 
-//        if(!m_controller)
-//            m_controller = new ItemController(m_scene);
+        //        if(!m_controller)
+        //            m_controller = new ItemController(m_scene);
 
-//        m_controller->hold(item, id);
+        //        m_controller->hold(item, id);
 
     }
 }
@@ -230,11 +230,23 @@ void SceneVisualizer::slotCurrentChanged(QModelIndex current,
     {
         QStandardItem* tmp_item = m_model->itemFromIndex(current);
 
-        m_item = dynamic_cast<SceneItem*>(tmp_item);
+        SceneItem* tmp_scene_item =
+                dynamic_cast<SceneItem*>(tmp_item);
 
-        if(m_item)
+        if(tmp_scene_item)
         {
-            update();
+            if(tmp_scene_item != m_item)
+            {
+                if(m_controller)
+                {
+                    m_controller->release();
+                    m_controller->hide();
+                }
+
+                m_item = tmp_scene_item;
+
+                update();
+            }
         }
         else
         {
@@ -243,9 +255,20 @@ void SceneVisualizer::slotCurrentChanged(QModelIndex current,
 
             if(inter_item)
             {
-                m_item = (SceneItem*)inter_item->parent();
+                tmp_scene_item =
+                        (SceneItem*)inter_item->parent();
 
-                update(); // wat?!
+                if(m_item != tmp_scene_item)
+                {
+                    if(m_controller)
+                    {
+                        m_controller->release();
+                        m_controller->hide();
+                    }
+
+                    m_item = tmp_scene_item;
+                    update(); // wat?!
+                }
 
                 foreach(int id, m_graph_to_model.keys()) {
                     if(m_graph_to_model.value(id)->index() ==
@@ -262,9 +285,20 @@ void SceneVisualizer::slotCurrentChanged(QModelIndex current,
 
                 if(item_item)
                 {
-                    m_item = (SceneItem*)inter_item->parent()->parent();
+                    tmp_scene_item =
+                            (SceneItem*)inter_item->parent()->parent();
 
-                    update(); // wat?!
+                    if(m_item != tmp_scene_item)
+                    {
+                        if(m_controller)
+                        {
+                            m_controller->release();
+                            m_controller->hide();
+                        }
+
+                        m_item = tmp_scene_item;
+                        update(); // wat?!
+                    }
 
                     foreach(int id, m_graph_to_model.keys()) {
                         if(m_graph_to_model.value(id)->index() ==
@@ -276,7 +310,14 @@ void SceneVisualizer::slotCurrentChanged(QModelIndex current,
                 }
                 else
                 {
+                    if(m_controller)
+                    {
+                        m_controller->release();
+                        m_controller->hide();
+                    }
+
                     m_item = 0;
+
                     update();
                 }
             }
@@ -284,6 +325,12 @@ void SceneVisualizer::slotCurrentChanged(QModelIndex current,
     }
     else
     {
+        if(m_controller)
+        {
+            m_controller->release();
+            m_controller->hide();
+        }
+
         m_item = 0;
         update();
     }
