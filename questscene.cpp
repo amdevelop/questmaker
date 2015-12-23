@@ -342,7 +342,7 @@ bool QuestScene::addSubjectItem(const QString& file_path)
     return false;
 }
 
-void QuestScene::reset()
+void QuestScene::reset(bool draw_empty)
 {
     // нельзя просто так взять и сделать clear()
     // потому что есть еще служебные итемы
@@ -364,6 +364,9 @@ void QuestScene::reset()
 
     m_controller->release();
     m_controller->hide();
+
+    if(draw_empty)
+        drawEmpty();
 }
 
 QGraphicsItem* QuestScene::graphicsItemFromId(int id)

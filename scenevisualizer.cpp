@@ -57,7 +57,6 @@ void SceneVisualizer::setSceneItem(SceneItem* scene_item)
 
 void SceneVisualizer::update()
 {
-    //    m_scene->clear();
     m_scene->reset();
 
     m_graph_to_model.clear();
@@ -96,7 +95,6 @@ void SceneVisualizer::update()
                             interior_item->id());
 
 
-                //                if(id != -1)
                 m_graph_to_model.insert(interior_item->id(),
                                         interior_item);
 
@@ -214,10 +212,16 @@ void SceneVisualizer::setModel(QStandardItemModel* model)
     {
         m_model = model;
 
-        connect(m_model,
-                SIGNAL(rowsRemoved(QModelIndex, int, int)),
-                SLOT(slotRowsRemoved(QModelIndex, int, int)));
-
+        if(m_model)
+        {
+            connect(m_model,
+                    SIGNAL(rowsRemoved(QModelIndex, int, int)),
+                    SLOT(slotRowsRemoved(QModelIndex, int, int)));
+        }
+        else
+        {
+            m_scene->reset(true);
+        }
         // todo: нужен нормальной механизм update()
         // потому что нельзя просто так взять и сделать update()
     }

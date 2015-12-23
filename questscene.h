@@ -81,7 +81,7 @@ public:
         return m_scene_item;
     }
 
-    void reset();
+    void reset(bool draw_empty = false);
 
     void drawEmpty();
 

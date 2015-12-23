@@ -400,8 +400,11 @@ void MainWindow::slotCloseEpisode()
 {
     if(m_item_creator)
     {
-        delete m_item_creator;
         ui->treeView->setModel(0);
+        ui->graphicsView->setSelectionModel(0);
+        ui->graphicsView->setModel(0);
+
+        delete m_item_creator;
         m_item_creator = 0;
 
         ui->actionPublish->setEnabled(false);
@@ -410,11 +413,6 @@ void MainWindow::slotCloseEpisode()
         ui->actionAdd_Interior->setEnabled(false);
         ui->actionClose_episode->setEnabled(false);
 
-        ui->graphicsView->setSelectionModel(0);
-
-//        ui->graphicsView->setSceneItem(0);
-//        ui->graphicsView->update();
-        ui->graphicsView->setModel(0);
     }
 }
 
