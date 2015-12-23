@@ -2,6 +2,7 @@
 #define QUESTTREE_H
 
 #include <QTreeView>
+#include "itemcreator.h"
 
 class QuestItem;
 

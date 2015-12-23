@@ -23,6 +23,8 @@ QuestTree::QuestTree(QWidget* parent)
     m_sceneMenu->addAction(tr("Down"));
     m_sceneMenu->addSeparator();
 
+    setSelectionMode(QAbstractItemView::SingleSelection);
+
     connect(m_sceneMenu->addAction(tr("Delete")),
             SIGNAL(triggered()),
             SLOT(slotDeleteItem()));
@@ -46,6 +48,8 @@ void QuestTree::contextMenuEvent(QContextMenuEvent *evt)
             break;
         case QuestItem::TypeScene:
         case QuestItem::TypeItemItem:
+        case QuestItem::TypeInterior:
+        case QuestItem::TypeSubject:
             m_sceneMenu->exec(evt->globalPos());
             break;
         case QuestItem::TypeItemBackGround:
@@ -62,4 +66,3 @@ void QuestTree::slotDeleteItem()
         m_contexMenuItem = 0;
     }
 }
-

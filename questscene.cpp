@@ -378,3 +378,14 @@ void QuestScene::setActiveItem(int id)
     m_active_handel = 0;
 }
 
+void QuestScene::showController()
+{
+    if(m_controller->holdItem())
+        m_controller->show();
+}
+
+void QuestScene::hideController()
+{
+    m_controller->hide();
+}
+

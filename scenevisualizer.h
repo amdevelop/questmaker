@@ -9,6 +9,7 @@ class QuestScene;
 
 class InteriorItem;
 class ItemController;
+class ItemCreator;
 
 class QStandardItem;
 class QStandardItemModel;
@@ -57,6 +58,8 @@ public slots:
     void slotItemSelected(int);
 
     void slotCurrentChanged(QModelIndex,QModelIndex);
+
+    void slotRowsRemoved(QModelIndex&, int, int);
 signals:
     void itemCreated(QString, QPolygonF);
 };

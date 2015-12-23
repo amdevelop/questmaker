@@ -100,6 +100,9 @@ public:
 
     void setActiveItem(int id);
 
+    void showController();
+    void hideController();
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);

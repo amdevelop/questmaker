@@ -128,12 +128,20 @@ void ItemController::show()
     foreach (QGraphicsItem* tmp_item, m_item_to_type.keys()) {
         tmp_item->show();
     }
+
+    foreach (QGraphicsItem* line, m_lines) {
+        line->show();
+    }
 }
 
 void ItemController::hide()
 {
     foreach (QGraphicsItem* tmp_item, m_item_to_type.keys()) {
         tmp_item->hide();
+    }
+
+    foreach (QGraphicsItem* line, m_lines) {
+        line->hide();
     }
 }
 
@@ -151,7 +159,7 @@ void ItemController::moveHandel(QGraphicsItem* item, QPointF point)
 
 void ItemController::moveHandel(HandelType type, QPointF)
 {
-    QGraphicsItem *src_handle = m_items[type], *dst_handle = 0;
+    QGraphicsItem *src_handle = m_items[type];
     switch (type) {
     case HandelTopLeft:
         m_items[HandelBottomLeft]->setX(src_handle->x());

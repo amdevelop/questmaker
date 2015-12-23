@@ -111,7 +111,9 @@ InteriorItem* ItemCreator::createInteriorItem(SceneItem* parent,
 void ItemCreator::removeItem(QuestItem* item)
 {
     if(dynamic_cast<SceneItem*>(item))
+    {
         emit sceneRemoved((SceneItem*)(item));
+    }
 
     removeRow(item->row(), item->parent()->index());
 }
