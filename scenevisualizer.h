@@ -30,7 +30,17 @@ class SceneVisualizer : public QGraphicsView
 
     QItemSelectionModel* m_selection_model;
 
+    double m_zoom;
+
 public:
+
+    enum ZoomType
+    {
+        ZoomIn,
+        ZoomOut,
+        ZoomOnetoOne
+    };
+
     SceneVisualizer(QWidget* parent = 0);
     void update();
 
@@ -46,6 +56,8 @@ public:
     // todo: выпилить этот метод и брать из модели
     void setSelectionModel(QItemSelectionModel* selection_model);
     void setModel(QStandardItemModel*);
+
+    bool zoom(ZoomType);
 
 public slots:
     void slotRowsRemoved(const QModelIndex&, int, int);

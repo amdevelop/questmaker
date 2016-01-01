@@ -72,6 +72,10 @@ private slots:
 
     void slotCreateEpisode();
     void slotCloseEpisode();
+
+    void slotZoomIn();
+    void slotZoomOut();
+
 };
 
 #endif // MAINWINDOW_H

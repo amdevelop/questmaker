@@ -263,6 +263,9 @@
    <addaction name="separator"/>
    <addaction name="actionPublish"/>
    <addaction name="separator"/>
+   <addaction name="actionZoom_In"/>
+   <addaction name="actionZoom_Out"/>
+   <addaction name="separator"/>
    <addaction name="actionCreate_item"/>
    <addaction name="actionOpenFile"/>
    <addaction name="actionAdd_Interior"/>
@@ -406,6 +409,30 @@
    </property>
    <property name="toolTip">
     <string>Move up</string>
+   </property>
+  </action>
+  <action name="actionZoom_In">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/50icons/12.png</normaloff>:/50icons/12.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom In</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom In</string>
+   </property>
+  </action>
+  <action name="actionZoom_Out">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/50icons/11.png</normaloff>:/50icons/11.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom Out</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom Out</string>
    </property>
   </action>
  </widget>

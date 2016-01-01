@@ -19,6 +19,8 @@
 SceneVisualizer::SceneVisualizer(QWidget* parent)
     : QGraphicsView(parent)
 {
+    m_zoom = 1;
+
     m_item = 0;
     m_selection_model = 0;
     m_controller = 0;
@@ -327,5 +329,29 @@ void SceneVisualizer::slotCurrentChanged(QModelIndex current,
 void SceneVisualizer::slotRowsRemoved(QModelIndex&, int, int)
 {
     // .
+}
+
+bool SceneVisualizer::zoom(ZoomType type)
+{
+    switch (type) {
+    case ZoomIn:
+        m_zoom *= 2;
+        scale(2, 2);
+        if(m_zoom >= 4)
+            return false;
+        break;
+    case ZoomOut:
+
+        m_zoom *= 0.5;
+        scale(0.5, 0.5);
+        if(m_zoom <= 0.5)
+            return false;
+        break;
+    case ZoomOnetoOne:
+    default:
+        return false;
+        break;
+    }
+    return true;
 }
 

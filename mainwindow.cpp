@@ -34,8 +34,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     m_settings("questmaker.ini", QSettings::IniFormat)
 {
-    hide();
-
     ui = new Ui::MainWindow;
 
     m_scene = 0;
@@ -63,6 +61,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionMove_up, SIGNAL(triggered()), SLOT(slotMoveUp()));
     connect(ui->actionMove_down, SIGNAL(triggered()), SLOT(slotMoveDown()));
+
+    connect(ui->actionZoom_In, SIGNAL(triggered()), SLOT(slotZoomIn()));
+    connect(ui->actionZoom_Out, SIGNAL(triggered()), SLOT(slotZoomOut()));
 
     connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(slotTreeWidgetClicked(QModelIndex)));
     connect(ui->treeView, SIGNAL(createAct()), SLOT(slotCreateAct()));
@@ -730,6 +731,44 @@ void MainWindow::slotCurrentChanged(const QModelIndex& current,
 
     if(q_item)
         ui->tableView->setModel(q_item->propertyModel());
+}
+
+void MainWindow::slotZoomIn()
+{
+    if(!ui->graphicsView->zoom(SceneVisualizer::ZoomIn))
+    {
+        ui->actionZoom_In->setEnabled(false);
+
+        if(!ui->actionZoom_Out->isEnabled())
+            ui->actionZoom_Out->setEnabled(true);
+    }
+    else
+    {
+        if(!ui->actionZoom_In->isEnabled())
+            ui->actionZoom_In->setEnabled(true);
+
+        if(!ui->actionZoom_Out->isEnabled())
+            ui->actionZoom_Out->setEnabled(true);
+    }
+}
+
+void MainWindow::slotZoomOut()
+{
+    if(!ui->graphicsView->zoom(SceneVisualizer::ZoomOut))
+    {
+        ui->actionZoom_Out->setEnabled(false);
+
+        if(!ui->actionZoom_In->isEnabled())
+            ui->actionZoom_In->setEnabled(true);
+    }
+    else
+    {
+        if(!ui->actionZoom_In->isEnabled())
+            ui->actionZoom_In->setEnabled(true);
+
+        if(!ui->actionZoom_Out->isEnabled())
+            ui->actionZoom_Out->setEnabled(true);
+    }
 }
 
 void MainWindow::slotMoveUp()
