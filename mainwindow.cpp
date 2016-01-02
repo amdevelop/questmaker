@@ -65,6 +65,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionZoom_In, SIGNAL(triggered()), SLOT(slotZoomIn()));
     connect(ui->actionZoom_Out, SIGNAL(triggered()), SLOT(slotZoomOut()));
 
+//    connect(ui->treeView->selectionModel(),
+//            SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+//            SLOT(slotCurrentChanged(QModelIndex,QModelIndex)));
+
     connect(ui->treeView, SIGNAL(clicked(QModelIndex)), SLOT(slotTreeWidgetClicked(QModelIndex)));
     connect(ui->treeView, SIGNAL(createAct()), SLOT(slotCreateAct()));
     connect(ui->treeView, SIGNAL(createScene()), SLOT(slotCreateScene()));
@@ -75,8 +79,8 @@ MainWindow::MainWindow(QWidget *parent) :
             SIGNAL(itemCreated(QString,QPolygonF)),
             SLOT(slotItemCreated(QString,QPolygonF)));
 
-    ui->graphicsView->horizontalScrollBar()->hide();
-    ui->graphicsView->verticalScrollBar()->hide();
+//    ui->graphicsView->horizontalScrollBar()->hide();
+//    ui->graphicsView->verticalScrollBar()->hide();
 
     connect(ui->tableView,
             SIGNAL(doubleClicked(QModelIndex)),
@@ -144,10 +148,15 @@ void MainWindow::slotFileOpen()
                 m_item_creator = 0;
 
                 m_item_creator = new ItemCreator;
+
                 ui->treeView->setModel(m_item_creator);
 
                 ui->graphicsView->setSelectionModel(
                             ui->treeView->selectionModel()); // m_item_creator->selectionModel());
+
+                connect(ui->treeView->selectionModel(),
+                        SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+                        SLOT(slotCurrentChanged(QModelIndex,QModelIndex)));
 
                 ui->graphicsView->setModel(m_item_creator);
 
@@ -373,9 +382,6 @@ void MainWindow::slotCreateEpisode()
                                                    int,
                                                    int)));
 
-    connect(m_item_creator->selectionModel(),
-            SIGNAL(currentChanged(QModelIndex,QModelIndex)),
-            SLOT(slotCurrentChanged(QModelIndex,QModelIndex)));
 
     connect(m_item_creator,
             SIGNAL(sceneRemoved(SceneItem*)),
@@ -386,6 +392,10 @@ void MainWindow::slotCreateEpisode()
 
     ui->graphicsView->setSelectionModel(
                 ui->treeView->selectionModel()); //m_item_creator->selectionModel());
+
+    connect(ui->treeView->selectionModel(),
+            SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+            SLOT(slotCurrentChanged(QModelIndex,QModelIndex)));
 
     createAct();
 
