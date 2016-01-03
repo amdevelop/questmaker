@@ -101,10 +101,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionAdd_Interior->setEnabled(false);
     ui->actionAdd_subject->setEnabled(false);
     ui->actionClose_episode->setEnabled(false);
-
+    ui->actionZoom_In->setEnabled(false);
+    ui->actionZoom_Out->setEnabled(false);
 
     ui->actionMove_up->setEnabled(false);
     ui->actionMove_down->setEnabled(false);
+
+    QString last_quest = m_settings.value("LastWorkQuest").toString();
+
+    if(!last_quest.isEmpty())
+        openQuest(last_quest);
 
     //    ui->tableWidget->verticalHeader()->hide();
 
@@ -130,168 +136,180 @@ void MainWindow::slotFileOpen()
     QString file_path = QFileDialog::getOpenFileName(this, "", m_settings.value("LastOpenedDir", QDir::homePath()).toString());
 
     if(!file_path.isEmpty())
+        openQuest(file_path);
+}
+
+void MainWindow::openQuest(QString file_path)
+{
+    QFileInfo fi(file_path);
+    m_settings.setValue("LastOpenedDir", fi.path());
+
+    QFile file(file_path);
+    if(file.open(QIODevice::ReadOnly))
     {
-        QFileInfo fi(file_path);
-        m_settings.setValue("LastOpenedDir", fi.path());
+        QJson::Parser p;
+        QVariant json_data = p.parse(&file);
+        QString episode_path = m_settings.value("LastOpenedDir").toString();
 
-        QFile file(file_path);
-        if(file.open(QIODevice::ReadOnly))
+        if(json_data.type() != QVariant::Invalid)
         {
-            QJson::Parser p;
-            QVariant json_data = p.parse(&file);
-            QString episode_path = m_settings.value("LastOpenedDir").toString();
+            m_settings.setValue("LastWorkQuest",
+                                file_path);
 
-            if(json_data.type() != QVariant::Invalid)
-            {
-                ui->treeView->setModel(0);
+            ui->treeView->setModel(0);
+            ui->graphicsView->setModel(0);
+
+            if(m_item_creator)
                 delete m_item_creator;
-                m_item_creator = 0;
 
-                m_item_creator = new ItemCreator;
+            m_item_creator = new ItemCreator;
 
-                ui->treeView->setModel(m_item_creator);
+            ui->treeView->setModel(m_item_creator);
 
-                ui->graphicsView->setSelectionModel(
-                            ui->treeView->selectionModel()); // m_item_creator->selectionModel());
+            ui->graphicsView->setSelectionModel(
+                        ui->treeView->selectionModel()); // m_item_creator->selectionModel());
 
-                connect(ui->treeView->selectionModel(),
-                        SIGNAL(currentChanged(QModelIndex,QModelIndex)),
-                        SLOT(slotCurrentChanged(QModelIndex,QModelIndex)));
+            connect(ui->treeView->selectionModel(),
+                    SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+                    SLOT(slotCurrentChanged(QModelIndex,QModelIndex)));
 
-                ui->graphicsView->setModel(m_item_creator);
+            ui->graphicsView->setModel(m_item_creator);
 
-                ui->actionPublish->setEnabled(true);
-                ui->actionClose_episode->setEnabled(true);
+            ui->actionPublish->setEnabled(true);
+            ui->actionClose_episode->setEnabled(true);
+
+            bool in, out;
+            ui->graphicsView->isZoomEnabled(in, out);
+
+            ui->actionZoom_In->setEnabled(in);
+            ui->actionZoom_Out->setEnabled(out);
+
+            QVariantMap episode = json_data.toMap().value("episode").toMap();
 
 
-                QVariantMap episode = json_data.toMap().value("episode").toMap();
+            foreach (QString key, episode.keys()) {
+                if(
+                        episode.value(key).type() != QVariant::List &&
+                        episode.value(key).type() != QVariant::Map )
+                    if(key != "id")
+                        m_item_creator->episodeItem()->setProperty(key, episode.value(key));
+            }
+
+            m_item_creator->episodeItem()->setProperty("cover",
+                                                       episode_path + "/" + episode.value("cover").toString());
 
 
-                foreach (QString key, episode.keys()) {
+            QVariantList acts = episode.value("acts").toList();
 
+            foreach (QVariant act_var, acts) {
+
+                ActItem *act_item = m_item_creator->createActItem();
+                //createActEmpty();
+
+                QVariantMap act_map = act_var.toMap();
+                QString act_ath = episode_path + "/" + act_map.value("id").toString();
+
+                foreach (QString key, act_map.keys()) {
                     if(
-                            episode.value(key).type() != QVariant::List &&
-                            episode.value(key).type() != QVariant::Map )
+                            act_map.value(key).type() != QVariant::List &&
+                            act_map.value(key).type() != QVariant::Map )
                         if(key != "id")
-                            m_item_creator->episodeItem()->setProperty(key, episode.value(key));
+                            act_item->setProperty(key, act_map.value(key));
                 }
 
-                m_item_creator->episodeItem()->setProperty("cover",
-                                                           episode_path + "/" + episode.value("cover").toString());
+                QVariantList scenes = act_map
+                        .value("scenes")
+                        .toList();
 
+                foreach (QVariant scene_var, scenes) {
 
-                QVariantList acts = episode.value("acts").toList();
+                    SceneItem* scene_item = m_item_creator->createSceneItem(act_item, 0);
 
-                foreach (QVariant act_var, acts) {
+                    QVariantMap scene_map = scene_var.toMap();
 
-                    ActItem *act_item = m_item_creator->createActItem();
-                    //createActEmpty();
-
-                    QVariantMap act_map = act_var.toMap();
-                    QString act_ath = episode_path + "/" + act_map.value("id").toString();
-
-                    foreach (QString key, act_map.keys()) {
+                    foreach (QString key, scene_map.keys()) {
                         if(
-                                act_map.value(key).type() != QVariant::List &&
-                                act_map.value(key).type() != QVariant::Map )
+                                scene_map.value(key).type() != QVariant::List &&
+                                scene_map.value(key).type() != QVariant::Map )
                             if(key != "id")
-                                act_item->setProperty(key, act_map.value(key));
+                                scene_item->setProperty(key, scene_map.value(key));
                     }
 
-                    QVariantList scenes = act_map
-                            .value("scenes")
-                            .toList();
 
-                    foreach (QVariant scene_var, scenes) {
+                    QString scene_path = act_ath + "/" +
+                            scene_map.value("id").toString() + "/";
 
-                        SceneItem* scene_item = m_item_creator->createSceneItem(act_item, 0);
+                    scene_item->setProperty("background",
+                                            scene_path +
+                                            scene_map.value("background").toString());
 
-                        QVariantMap scene_map = scene_var.toMap();
 
-                        foreach (QString key, scene_map.keys()) {
-                            if(
-                                    scene_map.value(key).type() != QVariant::List &&
-                                    scene_map.value(key).type() != QVariant::Map )
-                                if(key != "id")
-                                    scene_item->setProperty(key, scene_map.value(key));
+                    QVariantList items = scene_map.value("items").toList();
+
+                    foreach (QVariant items_var, items) {
+
+                        QVariantMap item_map = items_var.toMap();
+
+                        QString interior_path = scene_path +
+                                item_map.value("id").toString() + "/" +
+                                item_map.value("image").toString();
+
+                        InteriorItem* tmp_item = 0;
+                        if(item_map.value("type").toString() == "interior")
+                        {
+                            tmp_item = m_item_creator->createInteriorItem(
+                                        scene_item,
+                                        interior_path,
+                                        ui->graphicsView->scene()->width(),
+                                        ui->graphicsView->scene()->height());
+                        }
+                        else if(item_map.value("type").toString() == "subject")
+                        {
+                            SubjectItem* subj_item;
+                            tmp_item = subj_item = m_item_creator->createSubjectItem(
+                                        scene_item,
+                                        interior_path,
+                                        ui->graphicsView->scene()->width(),
+                                        ui->graphicsView->scene()->height(),
+                                        item_map.value("title").toString());
+
+                            QVariantList polygons = item_map.value("polygons").toList();
+
+                            foreach (QVariant one_poly_list, polygons) {
+                                QPolygonF polygon;
+                                foreach (QVariant point_var, one_poly_list.toList())
+                                {
+                                    polygon << QPointF(
+                                                   point_var.toList()[0].toDouble(),
+                                            point_var.toList()[1].toDouble());
+                                }
+
+                                m_item_creator->createItemItem(subj_item, "", polygon);
+                            }
                         }
 
+                        if(tmp_item)
+                        {
+                            tmp_item->setProperty("title",
+                                                  item_map.value("title"));
+                            tmp_item->setProperty("scene_scale_x",
+                                                  item_map.value("scene_scale_x"));
+                            tmp_item->setProperty("scene_scale_y",
+                                                  item_map.value("scene_scale_y"));
 
-                        QString scene_path = act_ath + "/" +
-                                scene_map.value("id").toString() + "/";
-
-                        scene_item->setProperty("background",
-                                                scene_path +
-                                                scene_map.value("background").toString());
-
-
-                        QVariantList items = scene_map.value("items").toList();
-
-                        foreach (QVariant items_var, items) {
-
-                            QVariantMap item_map = items_var.toMap();
-
-                            QString interior_path = scene_path +
-                                    item_map.value("id").toString() + "/" +
-                                    item_map.value("image").toString();
-
-                            InteriorItem* tmp_item = 0;
-                            if(item_map.value("type").toString() == "interior")
-                            {
-                                tmp_item = m_item_creator->createInteriorItem(
-                                            scene_item,
-                                            interior_path,
-                                            ui->graphicsView->scene()->width(),
-                                            ui->graphicsView->scene()->height());
-                            }
-                            else if(item_map.value("type").toString() == "subject")
-                            {
-                                SubjectItem* subj_item;
-                                tmp_item = subj_item = m_item_creator->createSubjectItem(
-                                            scene_item,
-                                            interior_path,
-                                            ui->graphicsView->scene()->width(),
-                                            ui->graphicsView->scene()->height(),
-                                            item_map.value("title").toString());
-
-                                QVariantList polygons = item_map.value("polygons").toList();
-
-                                foreach (QVariant one_poly_list, polygons) {
-                                    QPolygonF polygon;
-                                    foreach (QVariant point_var, one_poly_list.toList())
-                                    {
-                                        polygon << QPointF(
-                                                       point_var.toList()[0].toDouble(),
-                                                point_var.toList()[1].toDouble());
-                                    }
-
-                                    m_item_creator->createItemItem(subj_item, "", polygon);
-                                }
-                            }
-
-                            if(tmp_item)
-                            {
-                                tmp_item->setProperty("title",
-                                                      item_map.value("title"));
-                                tmp_item->setProperty("scene_scale_x",
-                                                      item_map.value("scene_scale_x"));
-                                tmp_item->setProperty("scene_scale_y",
-                                                      item_map.value("scene_scale_y"));
-
-                                tmp_item->setSceneX(item_map.value("scene_x").toReal());
-                                tmp_item->setSceneY(item_map.value("scene_y").toReal());
-                            }
+                            tmp_item->setSceneX(item_map.value("scene_x").toReal());
+                            tmp_item->setSceneY(item_map.value("scene_y").toReal());
                         }
                     }
                 }
+            }
 
-            }
-            else
-            {
-                QMessageBox::critical(this,
-                                      tr("Critical!"),
-                                      tr("Bad JSON-data!"));
-            }
+        }
+        else
+        {
+            QMessageBox::critical(this,
+                                  tr("Critical!"),
+                                  tr("Bad JSON-data!"));
         }
     }
 }
@@ -317,8 +335,6 @@ void MainWindow::slotOpenFileToProperties()
                 tmp_item->setData(file_path, Qt::DisplayRole);
 
             ui->graphicsView->update();
-
-            //            tmp_item
         }
     }
 }
@@ -404,6 +420,12 @@ void MainWindow::slotCreateEpisode()
     ui->actionPublish->setEnabled(true);
     ui->actionClose_episode->setEnabled(true);
 
+    bool in, out;
+    ui->graphicsView->isZoomEnabled(in, out);
+
+    ui->actionZoom_In->setEnabled(in);
+    ui->actionZoom_Out->setEnabled(out);
+
 //    slotTreeWidgetClicked(m_item_creator->selectionModel()->currentIndex());
 }
 
@@ -423,7 +445,8 @@ void MainWindow::slotCloseEpisode()
         ui->actionCreate_item->setEnabled(false);
         ui->actionAdd_Interior->setEnabled(false);
         ui->actionClose_episode->setEnabled(false);
-
+        ui->actionZoom_In->setEnabled(false);
+        ui->actionZoom_Out->setEnabled(false);
     }
 }
 
@@ -745,40 +768,24 @@ void MainWindow::slotCurrentChanged(const QModelIndex& current,
 
 void MainWindow::slotZoomIn()
 {
-    if(!ui->graphicsView->zoom(SceneVisualizer::ZoomIn))
-    {
-        ui->actionZoom_In->setEnabled(false);
+    ui->graphicsView->zoom(SceneVisualizer::ZoomIn);
 
-        if(!ui->actionZoom_Out->isEnabled())
-            ui->actionZoom_Out->setEnabled(true);
-    }
-    else
-    {
-        if(!ui->actionZoom_In->isEnabled())
-            ui->actionZoom_In->setEnabled(true);
+    bool in, out;
+    ui->graphicsView->isZoomEnabled(in, out);
 
-        if(!ui->actionZoom_Out->isEnabled())
-            ui->actionZoom_Out->setEnabled(true);
-    }
+    ui->actionZoom_In->setEnabled(in);
+    ui->actionZoom_Out->setEnabled(out);
 }
 
 void MainWindow::slotZoomOut()
 {
-    if(!ui->graphicsView->zoom(SceneVisualizer::ZoomOut))
-    {
-        ui->actionZoom_Out->setEnabled(false);
+    ui->graphicsView->zoom(SceneVisualizer::ZoomOut);
 
-        if(!ui->actionZoom_In->isEnabled())
-            ui->actionZoom_In->setEnabled(true);
-    }
-    else
-    {
-        if(!ui->actionZoom_In->isEnabled())
-            ui->actionZoom_In->setEnabled(true);
+    bool in, out;
+    ui->graphicsView->isZoomEnabled(in, out);
 
-        if(!ui->actionZoom_Out->isEnabled())
-            ui->actionZoom_Out->setEnabled(true);
-    }
+    ui->actionZoom_In->setEnabled(in);
+    ui->actionZoom_Out->setEnabled(out);
 }
 
 void MainWindow::slotMoveUp()

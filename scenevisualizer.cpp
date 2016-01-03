@@ -331,27 +331,33 @@ void SceneVisualizer::slotRowsRemoved(QModelIndex&, int, int)
     // .
 }
 
-bool SceneVisualizer::zoom(ZoomType type)
+void SceneVisualizer::zoom(ZoomType type)
 {
     switch (type) {
     case ZoomIn:
         m_zoom *= 2;
         scale(2, 2);
-        if(m_zoom >= 4)
-            return false;
+//        if(m_zoom >= 4)
+//            return false;
         break;
     case ZoomOut:
 
         m_zoom *= 0.5;
         scale(0.5, 0.5);
-        if(m_zoom <= 0.5)
-            return false;
+//        if(m_zoom <= 0.5)
+//            return false;
         break;
     case ZoomOnetoOne:
     default:
-        return false;
+//        return false;
         break;
     }
-    return true;
+//    return true;
 }
 
+void SceneVisualizer::isZoomEnabled(bool& in,
+                                    bool& out)
+{
+    in = !(m_zoom >= 4);
+    out = !(m_zoom <= 0.5);
+}

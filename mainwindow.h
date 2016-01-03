@@ -33,6 +33,8 @@ class MainWindow : public QMainWindow
 
     InteriorItem* m_interior_item;
 
+    void openQuest(QString file_path);
+
     QuestItem* createScene();
     QuestItem* createAct();
     QuestItem* createActEmpty();

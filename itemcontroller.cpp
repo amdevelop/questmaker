@@ -186,8 +186,8 @@ void ItemController::moveHandel(HandelType type, QPointF)
 
 QRectF ItemController::boundingRect() const
 {
-    return QRectF(m_items[HandelTopLeft]->pos(),
-                  m_items[HandelBottomRight]->pos());
+    return QRectF(m_lines[LineLeft]->line().p1(),
+                  m_lines[LineRight]->line().p2());
 }
 
 void ItemController::drawLines()

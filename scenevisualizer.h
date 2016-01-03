@@ -57,7 +57,8 @@ public:
     void setSelectionModel(QItemSelectionModel* selection_model);
     void setModel(QStandardItemModel*);
 
-    bool zoom(ZoomType);
+    void zoom(ZoomType);
+    void isZoomEnabled(bool& in, bool& out);
 
 public slots:
     void slotRowsRemoved(const QModelIndex&, int, int);

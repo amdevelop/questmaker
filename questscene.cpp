@@ -235,11 +235,9 @@ void QuestScene::mouseReleaseEvent(QGraphicsSceneMouseEvent*)
     case ModeNormal:
         if(m_active_handel)
         {
-            QGraphicsItem *tl_item = m_controller->handel(ItemController::HandelTopLeft);
-
             emit itemUpdate(m_item_to_id.value(m_controller->holdItem()),
-                            QRectF((tl_item->x() + m_offset_x) / width(),
-                                   (tl_item->y() + m_offset_y) / height(),
+                            QRectF(m_controller->boundingRect().x() / (float)width(),
+                                   m_controller->boundingRect().y() / (float)height(),
                                    m_controller->boundingRect().size().width() / (float)width(),
                                    m_controller->boundingRect().size().height() / (float)height()));
         }
